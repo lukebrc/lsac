@@ -35,6 +35,7 @@ function! LsacParseLua()
 endfunction
 
 function! LsacCompleteScala()
+    let s:currentLine = getline(".")
     execute 'python import sys'
     execute 'python sys.argv = ["complete"]'
     execute 'pyfile ' . s:pyscript_scala
