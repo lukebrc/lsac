@@ -28,11 +28,11 @@ function! LsacParse()
     endif
 endfunction
 
-function! ExecLsacFunction(script_path, function)
-    let s:wordUnderCursor = expand("<cword>")
+function! ExecLsacFunction(script_path, lsac_fun)
+    "let s:wordUnderCursor = expand("<cword>")
+    let s:currentLine = getline(".")
     execute 'python import sys'
-    execute 'python sys.argv = ["' a:function '"]'
-    "let s:currentLine = getline(".")
+    execute 'python sys.argv = ["' . a:lsac_fun . '"]'
     execute 'pyfile ' . a:script_path
 endfunction
 
