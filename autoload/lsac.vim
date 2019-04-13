@@ -5,34 +5,36 @@ if !has('python')
 endif
 
 function! LsacComplete()
+    let s:parser = resolve('~/.vim/bundle/lsac/parser.py')
     if &filetype == "scala"
-        call ExecLsacFunction(resolve('~/.vim/bundle/lsac/parse_scala.py'), 'complete')
+        call ExecLsacFunction(s:parser, 'scala', 'complete')
     elseif &filetype == "python"
-        call ExecLsacFunction(resolve('~/.vim/bundle/lsac/parse.py'), 'complete')
+        call ExecLsacFunction(s:parser, 'python', 'complete')
     elseif &filetype == "lua"
-        call ExecLsacFunction(resolve('~/.vim/bundle/lsac/parse_lua.py'), 'complete')
+        call ExecLsacFunction(s:parser, 'lua', 'complete')
     else
         echo "Unknown type: " &filetype
     endif
 endfunction
 
 function! LsacParse()
+    let s:parser = resolve('~/.vim/bundle/lsac/parser.py')
     if &filetype == "scala"
-        call ExecLsacFunction(resolve('~/.vim/bundle/lsac/parse_scala.py'), 'parse')
+        call ExecLsacFunction(s:parser, 'scala', 'parse')
     elseif &filetype == "python"
-        call ExecLsacFunction(resolve('~/.vim/bundle/lsac/parse.py'), 'parse')
+        call ExecLsacFunction(s:parser, 'python', 'parse')
     elseif &filetype == "lua"
-        call ExecLsacFunction(resolve('~/.vim/bundle/lsac/parse_lua.py'), 'parse')
+        call ExecLsacFunction(s:parser, 'lua', 'parse')
     else
         echo "Unknown type: " &filetype
     endif
 endfunction
 
-function! ExecLsacFunction(script_path, lsac_fun)
+function! ExecLsacFunction(script_path, ftype, lsac_fun)
     "let s:wordUnderCursor = expand("<cword>")
     let s:currentLine = getline(".")
     execute 'python import sys'
-    execute 'python sys.argv = ["' . a:lsac_fun . '"]'
+    execute 'python sys.argv = ["' . a:ftype . '", "' . a:lsac_fun . '"]'
     execute 'pyfile ' . a:script_path
 endfunction
 

@@ -1,13 +1,13 @@
-import vim
 import re
-import sys
 
 
 class ScalaParser(object):
     def __init__(self):
         self.__objMap = {}
 
-    def parseClasses(self, lines):
+    def parseClasses(self, lines, currentRange):
+        self.__lines = lines
+        self.__currentRange = currentRange
         currentClass = ''
         if '' not in self.__objMap:
             self.__objMap[''] = set()
@@ -34,6 +34,9 @@ class ScalaParser(object):
                         i += 1
                 funId = ScalaParser.__parseFunDecl(line)
                 self.__objMap[currentClass].add(funId)
+            elif ScalaParser.__isVarDef(line):
+                varName, varType = ScalaParser.__parseVarDef(line)
+                self.__objMap[currentClass].add(varName)
             i += 1
         return self.__objMap
 
@@ -70,9 +73,9 @@ class ScalaParser(object):
         return self.__findNearestDefinition(varName)
 
     def __findNearestClass(self, varName):
-        currentRange = vim.current.range
+        currentRange = self.__currentRange
         for i in range(currentRange.start-1, -1, -1):
-            line = vim.current.buffer[i]
+            line = self.__lines[i]
             if self.__isClassDef(line):
                 className = ScalaParser.__getClassName(line)
                 if (className is not None) and (className in self.__objMap):
@@ -80,19 +83,18 @@ class ScalaParser(object):
         return None
 
     def __findNearestDefinition(self, varName):
-        currentRange = vim.current.range
+        currentRange = self.__currentRange
         for i in range(currentRange.start-1, -1, -1):
-            line = vim.current.buffer[i]
-            if ScalaParser.__isVarDef(varName, line):
-                varDef = ScalaParser.__getVarType(varName, line)
+            line = self.__lines[i]
+            if ScalaParser.__isVarDef(line):
+                varDef = ScalaParser.__getVarType(line)
                 if (varDef is not None) and (varDef in self.__objMap):
                     return varDef
         return None
 
     @staticmethod
-    def __isVarDef(varName, line):
+    def __isVarDef(line):
         r1 = re.findall(r"\s*va[rl]\s+(\w+)(\s*:\s*\w+)?\s*=(.*)", line)
-        # r1 = re.findall(r"\s*va[rl]\s+(\w+)\s*", line)
         return len(r1) > 0
 
     @staticmethod
@@ -100,7 +102,7 @@ class ScalaParser(object):
         return re.match(r"\s*(class|object)\s+(\w+)", line)
 
     @staticmethod
-    def __getVarType(varName, line):
+    def __getVarType(line):
         r1 = re.findall(r"\s*(\w+)\s*:\s*(\w+)\s*", line)
         if len(r1) != 0:
             return r1[0][1]
@@ -143,33 +145,11 @@ class ScalaParser(object):
                         line)
         return r1[0][1]
 
-
-def printFunctions(functions):
-    for f in functions:
-        print(f)
-
-
-def main(argv):
-    firstStart = False
-    try:
-        scalaParser
-    except NameError:
-        scalaParser = ScalaParser()
-        firstStart = True
-
-    if sys.argv[0] == 'parse':
-        objMap = scalaParser.parseClasses(vim.current.buffer)
-        print(objMap)
-    elif sys.argv[0] == 'complete':
-        if firstStart:
-            scalaParser.parseClasses(vim.current.buffer)
-        currentLine = vim.eval('s:currentLine')
-        # currentWord = vim.eval('s:wordUnderCursor')
-        functions = scalaParser.completeMe(currentLine)
-        printFunctions(functions)
-    else:
-        print('Unknown argument: ' + sys.argv[0])
-
-
-if __name__ == "__main__":
-    main(sys.argv)
+    @staticmethod
+    def __parseVarDef(line):
+        r1 = re.findall(r"\s*(private|public)?\s+va[rl]\s+(\w+)", line)
+        if len(r1) == 0:
+            return None, None
+        varName = r1[0][-1]
+        varType = ScalaParser.__getVarType(line)
+        return varName, varType
