@@ -1,4 +1,3 @@
-
 if !has('python')
     echo "Error: Required vim compiled with +python"
     finish
@@ -33,7 +32,8 @@ endfunction
 function! ExecLsacFunction(script_path, ftype, lsac_fun)
     "let s:wordUnderCursor = expand("<cword>")
     let s:currentLine = getline(".")
-    let s:currentPath = expand('<sfile>')
+    let s:currentPath = expand('%')
+    let s:pyPluginPath = expand('~/.vim/bundle/lsac')
     execute 'python import sys'
     execute 'python sys.argv = ["' . a:ftype . '", "' . a:lsac_fun . '"]'
     execute 'pyfile ' . a:script_path

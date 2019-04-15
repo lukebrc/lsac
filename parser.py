@@ -1,5 +1,12 @@
 import vim
 import sys
+import os
+
+pluginPath = vim.eval('s:pyPluginPath')
+pluginPath = os.path.realpath(pluginPath)
+if pluginPath not in sys.path:
+    sys.path.append(pluginPath)
+
 import scalaparser
 import luaparser
 
@@ -35,12 +42,12 @@ def main(argv):
         raise 'Unknown filetype'
 
     currentPath = vim.eval('s:currentPath')
-    if sys.argv[0] == 'parse':
+    if sys.argv[1] == 'parse':
         objMap = parser.parseClasses(vim.current.buffer,
                                      vim.current.range,
                                      currentPath)
         print(objMap)
-    elif sys.argv[0] == 'complete':
+    elif sys.argv[1] == 'complete':
         # parser.parseClasses(vim.current.buffer,
         #                    vim.current.range)
         currentLine = vim.eval('s:currentLine')

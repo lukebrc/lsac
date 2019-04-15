@@ -5,11 +5,11 @@ class LuaParser(object):
     def __init__(self):
         self.__objMap = {}
 
-    def parseClasses(self, lines, currentRange, filename):
+    def parseClasses(self, lines, currentRange, currentPath):
         self.__lines = lines
         self.__currentRange = currentRange
-        self.__moduleObject = LuaParser.__findModuleObject()
-        self.__currentFilename = filename
+        self.__moduleObject = self.__findModuleObject()
+        self.__currentPath = currentPath 
         i = 0
         while i < len(lines):
             line = lines[i]
@@ -18,10 +18,8 @@ class LuaParser(object):
                     if i+1 >= len(lines):
                         line += lines[i+1]
                         i += 1
-                className, funName, funArgs = LuaParser.__parseFunDef(line)
-                if className not in self.__objMap:
-                    self.__objMap[className] = []
-                self.__objMap[className].append(funName + "(" + funArgs + ")")
+                self.__processFunDef(line)
+            i += 1
         self.__replaceModuleClass()
         return self.__objMap
 
@@ -40,10 +38,23 @@ class LuaParser(object):
 
     def __findModuleObject(self):
         for i in range(len(self.__lines)-1, -1, -1):
-            line = self.__lines(i)
+            line = self.__lines[i]
             if LuaParser.__isClassReturn(line):
                 return LuaParser.__getModuleClass(line)
         return None
+
+    @staticmethod
+    def __isClassReturn(line):
+        return re.match(r"\s*return\s+\w+", line) or \
+            re.match(r"\s*return\(\s*\w+\s*\)", line)
+
+    @staticmethod
+    def __getModuleClass(line):
+        if re.match(r"\s*return \w+", line):
+            r1 = re.findall(r"return (\w+)", line)
+        else:
+            r1 = re.findall(r"return\((\w+)\)", line)
+        return r1[0]
 
     def __getFunctionsStartingWith(self, className, funPref):
         funcs = self.__objMap[className]
@@ -131,33 +142,46 @@ class LuaParser(object):
     def __isFunDef(line):
         return re.match(r"\s*function ([a-z0-9A-Z_.:]+).*\(", line)
 
-    @staticmethod
-    # returns tuple (className, funName, funArgs)
-    def __parseFunDef(line):
+    def __processFunDef(self, line):
         if LuaParser.__isClassFun(line):
-            return LuaParser.__parseClassFunDef(line)
-        return LuaParser.__parseSimpleFunDef(line)
+            return self.__processClassFunDef(line)
+        return self.__processSimpleFunDef(line)
 
     @staticmethod
-    # returns tuple (className, funName, funArgs)
-    def __parseClassFunDef(line):
+    def __isClassFun(line):
+        return re.match(r"\s*function\s+[\w.]+[.:]\w+\(", line)
+
+    def __processClassFunDef(self, line):
         r1 = re.findall(r"\s*function\s+([\w.]+)([.:])(\w+)\((.*)\)",
                         line)
-        return r1[0][0], r1[0][2], r1[0][3]
+        res = r1[0]
+        className = res[0]
+        funName = res[2]
+        funArgs = res[3]
+        if className not in self.__objMap:
+            self.__objMap[className] = []
+        self.__objMap[className].append(funName + "(" + funArgs + ")")
 
-    def __parseSimpleFunDef(line):
+    def __processSimpleFunDef(self, line):
         r1 = re.findall(r"\s*function\s+([\w.]+)\((.*)\)", line)
-        return '', r1[0][0], r1[0][1]
+        res = r[0]
+        funName = res[0]
+        funArgs = res[1]
+        self.__objMap[''].append(funName + "(" + funArgs + ")")
 
     def __replaceModuleClass(self):
         if self.__moduleObject is None:
             return
+        newObjs = {}
         for k in self.__objMap:
             if k.find(self.__moduleObject) == 0:
-                postfix = k[len(self.__moduleObject):]
-                # _M.A.f -> filename.A.f
-                newName = self.__currentFilename[0:-4] + postfix
-                self.__objMap[newName] = self.__objMap[k]
+                postfix = k[len(self.__moduleObject)+1:]
+                # _M.ClassName -> filename.ClassName
+                luaPath = self.__currentPath[0:-4].replace('/', '.')
+                if luaPath not in newObjs:
+                    newObjs[luaPath] = {}
+                newObjs[luaPath][postfix] = self.__objMap[k]
+        self.__objMap.update(newObjs)
 
     @staticmethod
     def __parseVarDef(line):
