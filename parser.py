@@ -10,13 +10,13 @@ if pluginPath not in sys.path:
 import scalaparser
 import luaparser
 
-
 def printFunctions(functions):
     for f in functions:
         print(f)
 
 
 def startScala():
+    global scalaParser
     try:
         scalaParser
     except NameError:
@@ -25,6 +25,7 @@ def startScala():
 
 
 def startLua():
+    global luaParser
     try:
         luaParser
     except NameError:

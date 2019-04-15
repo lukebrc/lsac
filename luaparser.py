@@ -23,15 +23,15 @@ class LuaParser(object):
         self.__replaceModuleClass()
         return self.__objMap
 
-    def completeMe(self, currentLine):
-        r1 = re.findall(r"\s*(.*)\.(.*)\s*", currentLine)
+    def completeMe(self, currentLine, currentPath):
+        r1 = re.findall(r"\s*(\w+)[.:](\w*)\s*", currentLine)
         if len(r1) == 0:
             return []
         varName = r1[0][0]
         funPref = r1[0][1]
         if varName in self.__objMap:
             return self.__objMap[varName]
-        className = self.__findVarClass(varName)
+        className = self.__findVarType(varName)
         if className is None:
             return []
         return self.__getFunctionsStartingWith(className, funPref)
@@ -70,12 +70,12 @@ class LuaParser(object):
     def __prefixMatches(pref, word):
         return word.find(pref) == 0
 
-    def __findVarClass(self, varName):
-        if varName == "this":
-            return self.__findNearestClass(varName)
+    def __findVarType(self, varName):
+        if varName == "self":
+            return self.__findNearestClass()
         return self.__findNearestDefinition(varName)
 
-    def __findNearestClass(self, varName):
+    def __findNearestClass(self):
         currentRange = self.__currentRange
         for i in range(currentRange.start-1, -1, -1):
             line = self.__lines[i]
@@ -89,54 +89,29 @@ class LuaParser(object):
         currentRange = self.__currentRange
         for i in range(currentRange.start-1, -1, -1):
             line = self.__lines[i]
-            if LuaParser.__isVarDef(line):
-                varDef = LuaParser.__getVarType(line)
+            if LuaParser.__isVarDef(line, varName):
+                varDef = LuaParser.__getVarType(line, varName)
                 if (varDef is not None) and (varDef in self.__objMap):
                     return varDef
         return None
 
     @staticmethod
-    def __isVarDef(line):
-        r1 = re.findall(r"\s*va[rl]\s+(\w+)(\s*:\s*\w+)?\s*=(.*)", line)
-        return len(r1) > 0
+    def __isVarDef(line, varName):
+        return re.match(r"\s*" + varName + "\s+=\s*(.+):new", line)
 
     @staticmethod
     def __isClassDef(line):
-        return re.match(r"\s*(class|object)\s+(\w+)", line)
+        return re.match(r"\s*function\s+[\w.]+[.:]\w+", line)
 
     @staticmethod
-    def __getVarType(line):
-        r1 = re.findall(r"\s*(\w+)\s*:\s*(\w+)\s*", line)
-        if len(r1) != 0:
-            return r1[0][1]
-        r1 = re.findall(r"\s*(\w+)\s*=\s*new\s+(\w+)", line)
-        if len(r1) != 0:
-            return r1[0][1]
-        r1 = re.findall(r"\s*(\w+)\s*=\s*(\w+)\(.*\)", line)
-        if len(r1) != 0:
-            return r1[0][1]
-        return None
+    def __getVarType(line, varName):
+        r1 = re.findall(r"\s*" + varName + "\s+=\s*(.+):new", line)
+        return r1[0]
 
     @staticmethod
     def __getClassName(line):
-        match = re.findall(r"\s*class\s+(\w+)", line)
-        if len(match) == 0:
-            match = re.findall(r"\s*object\s+(\w+)", line)
-        return match[0]
-
-    def __parseClassArguments(self, className, line):
-        r1 = re.findall(r"\s*class\s+(\w+)(.*)", line)
-        argsStr = r1[0][1]
-        for arg in argsStr.split(','):
-            argName, argType = LuaParser.__parseArgDecl(arg)
-            self.__objMap[className].add(argName)
-
-    @staticmethod
-    def __parseArgDecl(argStr):
-        if argStr.find(':') == -1:
-            return argStr, ''
-        r1 = re.findall(r"\s*(\w+)\s*:\s*(\w+)", argStr)
-        return r1[0][0], r1[0][1]
+        match = re.findall(r"\s*function\s+([\w.]+)[.:](\w+)", line)
+        return match[0][0]
 
     @staticmethod
     def __isFunDef(line):
@@ -148,6 +123,7 @@ class LuaParser(object):
         return self.__processSimpleFunDef(line)
 
     @staticmethod
+    # is it class function?
     def __isClassFun(line):
         return re.match(r"\s*function\s+[\w.]+[.:]\w+\(", line)
 
