@@ -1,43 +1,28 @@
 import re
 
 
-class ScalaParser(object):
+class LuaParser(object):
     def __init__(self):
         self.__objMap = {}
 
-    def parseClasses(self, lines, currentRange):
+    def parseClasses(self, lines, currentRange, filename):
         self.__lines = lines
         self.__currentRange = currentRange
-        currentClass = ''
-        if '' not in self.__objMap:
-            self.__objMap[''] = set()
+        self.__moduleObject = LuaParser.__findModuleObject()
+        self.__currentFilename = filename
         i = 0
         while i < len(lines):
             line = lines[i]
-            if ScalaParser.__isClassDef(line):
-                currentClass = ScalaParser.__getClassName(line)
-                if currentClass not in self.__objMap:
-                    self.__objMap[currentClass] = set()
-                if line.find('(') != -1:
-                    while line.find(')') == -1:
-                        if i+1 >= len(lines):
-                            break
+            if LuaParser.__isFunDef(line):
+                while line.find(')') == -1:
+                    if i+1 >= len(lines):
                         line += lines[i+1]
                         i += 1
-                    self.__parseClassArguments(currentClass, line)
-            elif ScalaParser.__isFunDef(line):
-                if line.find('(') != -1:
-                    while line.find(')') == -1:
-                        if i+1 < len(lines):
-                            break
-                        line += lines[i+1]
-                        i += 1
-                funId = ScalaParser.__parseFunDef(line)
-                self.__objMap[currentClass].add(funId)
-            elif ScalaParser.__isVarDef(line):
-                varName, varType = ScalaParser.__parseVarDef(line)
-                self.__objMap[currentClass].add(varName)
-            i += 1
+                className, funName, funArgs = LuaParser.__parseFunDef(line)
+                if className not in self.__objMap:
+                    self.__objMap[className] = []
+                self.__objMap[className].append(funName + "(" + funArgs + ")")
+        self.__replaceModuleClass()
         return self.__objMap
 
     def completeMe(self, currentLine):
@@ -53,13 +38,20 @@ class ScalaParser(object):
             return []
         return self.__getFunctionsStartingWith(className, funPref)
 
+    def __findModuleObject(self):
+        for i in range(len(self.__lines)-1, -1, -1):
+            line = self.__lines(i)
+            if LuaParser.__isClassReturn(line):
+                return LuaParser.__getModuleClass(line)
+        return None
+
     def __getFunctionsStartingWith(self, className, funPref):
         funcs = self.__objMap[className]
         if len(funPref) == 0:
             return funcs
         matchingFuncs = []
         for name in self.__objMap[className]:
-            if ScalaParser.__prefixMatches(funPref, name):
+            if LuaParser.__prefixMatches(funPref, name):
                 matchingFuncs.append(name)
         return matchingFuncs
 
@@ -77,7 +69,7 @@ class ScalaParser(object):
         for i in range(currentRange.start-1, -1, -1):
             line = self.__lines[i]
             if self.__isClassDef(line):
-                className = ScalaParser.__getClassName(line)
+                className = LuaParser.__getClassName(line)
                 if (className is not None) and (className in self.__objMap):
                     return className
         return None
@@ -86,8 +78,8 @@ class ScalaParser(object):
         currentRange = self.__currentRange
         for i in range(currentRange.start-1, -1, -1):
             line = self.__lines[i]
-            if ScalaParser.__isVarDef(line):
-                varDef = ScalaParser.__getVarType(line)
+            if LuaParser.__isVarDef(line):
+                varDef = LuaParser.__getVarType(line)
                 if (varDef is not None) and (varDef in self.__objMap):
                     return varDef
         return None
@@ -125,7 +117,7 @@ class ScalaParser(object):
         r1 = re.findall(r"\s*class\s+(\w+)(.*)", line)
         argsStr = r1[0][1]
         for arg in argsStr.split(','):
-            argName, argType = ScalaParser.__parseArgDecl(arg)
+            argName, argType = LuaParser.__parseArgDecl(arg)
             self.__objMap[className].add(argName)
 
     @staticmethod
@@ -137,13 +129,35 @@ class ScalaParser(object):
 
     @staticmethod
     def __isFunDef(line):
-        return re.match(r"\s*(private|public)?\s*def \w+\s*\(.*\)", line)
+        return re.match(r"\s*function ([a-z0-9A-Z_.:]+).*\(", line)
 
     @staticmethod
+    # returns tuple (className, funName, funArgs)
     def __parseFunDef(line):
-        r1 = re.findall(r"\s*(private|public)*\s*def (\w+\s*\(.*\))",
+        if LuaParser.__isClassFun(line):
+            return LuaParser.__parseClassFunDef(line)
+        return LuaParser.__parseSimpleFunDef(line)
+
+    @staticmethod
+    # returns tuple (className, funName, funArgs)
+    def __parseClassFunDef(line):
+        r1 = re.findall(r"\s*function\s+([\w.]+)([.:])(\w+)\((.*)\)",
                         line)
-        return r1[0][1]
+        return r1[0][0], r1[0][2], r1[0][3]
+
+    def __parseSimpleFunDef(line):
+        r1 = re.findall(r"\s*function\s+([\w.]+)\((.*)\)", line)
+        return '', r1[0][0], r1[0][1]
+
+    def __replaceModuleClass(self):
+        if self.__moduleObject is None:
+            return
+        for k in self.__objMap:
+            if k.find(self.__moduleObject) == 0:
+                postfix = k[len(self.__moduleObject):]
+                # _M.A.f -> filename.A.f
+                newName = self.__currentFilename[0:-4] + postfix
+                self.__objMap[newName] = self.__objMap[k]
 
     @staticmethod
     def __parseVarDef(line):
@@ -151,5 +165,5 @@ class ScalaParser(object):
         if len(r1) == 0:
             return None, None
         varName = r1[0][-1]
-        varType = ScalaParser.__getVarType(line)
+        varType = LuaParser.__getVarType(line)
         return varName, varType

@@ -33,6 +33,7 @@ endfunction
 function! ExecLsacFunction(script_path, ftype, lsac_fun)
     "let s:wordUnderCursor = expand("<cword>")
     let s:currentLine = getline(".")
+    let s:currentPath = expand('<sfile>')
     execute 'python import sys'
     execute 'python sys.argv = ["' . a:ftype . '", "' . a:lsac_fun . '"]'
     execute 'pyfile ' . a:script_path

@@ -1,6 +1,7 @@
 import vim
 import sys
 import scalaparser
+import luaparser
 
 
 def printFunctions(functions):
@@ -12,27 +13,39 @@ def startScala():
     try:
         scalaParser
     except NameError:
-        scalaParser = ScalaParser()
+        scalaParser = scalaparser.ScalaParser()
     return scalaParser
+
+
+def startLua():
+    try:
+        luaParser
+    except NameError:
+        luaParser = luaparser.LuaParser()
+    return luaParser
 
 
 def main(argv):
     parser = None
     if argv[0] == 'scala':
         parser = startScala()
+    elif argv[0] == 'lua':
+        parser = startLua()
     else:
         raise 'Unknown filetype'
 
+    currentPath = vim.eval('s:currentPath')
     if sys.argv[0] == 'parse':
         objMap = parser.parseClasses(vim.current.buffer,
-                                     vim.current.range)
+                                     vim.current.range,
+                                     currentPath)
         print(objMap)
     elif sys.argv[0] == 'complete':
         # parser.parseClasses(vim.current.buffer,
         #                    vim.current.range)
         currentLine = vim.eval('s:currentLine')
         # currentWord = vim.eval('s:wordUnderCursor')
-        functions = parser.completeMe(currentLine)
+        functions = parser.completeMe(currentLine, currentPath)
         printFunctions(functions)
     else:
         print('Unknown argument: ' + sys.argv[0])
