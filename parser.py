@@ -10,6 +10,7 @@ if pluginPath not in sys.path:
 import scalaparser
 import luaparser
 
+
 def printFunctions(functions):
     for f in functions:
         print(f)
@@ -49,8 +50,7 @@ def main(argv):
                                      currentPath)
         print(objMap)
     elif sys.argv[1] == 'complete':
-        # parser.parseClasses(vim.current.buffer,
-        #                    vim.current.range)
+        parser.parseClasses(vim.current.buffer, vim.current.range, currentPath)
         currentLine = vim.eval('s:currentLine')
         # currentWord = vim.eval('s:wordUnderCursor')
         functions = parser.completeMe(currentLine, currentPath)

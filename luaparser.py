@@ -9,7 +9,7 @@ class LuaParser(object):
         self.__lines = lines
         self.__currentRange = currentRange
         self.__moduleObject = self.__findModuleObject()
-        self.__currentPath = currentPath 
+        self.__currentPath = currentPath
         i = 0
         while i < len(lines):
             line = lines[i]
@@ -24,13 +24,18 @@ class LuaParser(object):
         return self.__objMap
 
     def completeMe(self, currentLine, currentPath):
-        r1 = re.findall(r"\s*(\w+)[.:](\w*)\s*", currentLine)
+        r1 = re.findall(r"\s*([\w.]+)[.:](\w*)\s*", currentLine)
         if len(r1) == 0:
             return []
         varName = r1[0][0]
         funPref = r1[0][1]
-        if varName in self.__objMap:
-            return self.__objMap[varName]
+        completions = LuaParser.__findObjMapRecursive(varName, self.__objMap)
+        if len(completions) > 0:
+            if len(funPref) > 0:
+                completions = filter(lambda x: x.find(funPref) == 0,
+                                     completions)
+                completions = list(completions)
+            return completions
         className = self.__findVarType(varName)
         if className is None:
             return []
@@ -97,7 +102,7 @@ class LuaParser(object):
 
     @staticmethod
     def __isVarDef(line, varName):
-        return re.match(r"\s*" + varName + "\s+=\s*(.+):new", line)
+        return re.match(r"\s*{}\s+=\s*(.+):new".format(varName), line)
 
     @staticmethod
     def __isClassDef(line):
@@ -105,7 +110,7 @@ class LuaParser(object):
 
     @staticmethod
     def __getVarType(line, varName):
-        r1 = re.findall(r"\s*" + varName + "\s+=\s*(.+):new", line)
+        r1 = re.findall(r"\s*{}\s+=\s*(.+):new".format(varName), line)
         return r1[0]
 
     @staticmethod
@@ -140,7 +145,7 @@ class LuaParser(object):
 
     def __processSimpleFunDef(self, line):
         r1 = re.findall(r"\s*function\s+([\w.]+)\((.*)\)", line)
-        res = r[0]
+        res = r1[0]
         funName = res[0]
         funArgs = res[1]
         self.__objMap[''].append(funName + "(" + funArgs + ")")
@@ -167,3 +172,16 @@ class LuaParser(object):
         varName = r1[0][-1]
         varType = LuaParser.__getVarType(line)
         return varName, varType
+
+    @staticmethod
+    def __findObjMapRecursive(varPath, objMap):
+        if len(varPath) == 0:
+            return []
+        parts = varPath.split('.')
+        if parts[0] not in objMap:
+            return []
+        objMap = objMap[parts[0]]
+        if len(parts) == 1:
+            return objMap
+        varPath = ".".join(parts[1:])
+        return LuaParser.__findObjMapRecursive(varPath, objMap)
