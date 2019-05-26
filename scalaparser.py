@@ -5,7 +5,7 @@ class ScalaParser(object):
     def __init__(self):
         self.__objMap = {}
 
-    def parseClasses(self, lines, currentRange):
+    def parseClasses(self, lines, currentRange, currentPath):
         self.__lines = lines
         self.__currentRange = currentRange
         currentClass = ''
