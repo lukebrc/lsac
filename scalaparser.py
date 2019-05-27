@@ -40,7 +40,7 @@ class ScalaParser(object):
             i += 1
         return self.__objMap
 
-    def completeMe(self, currentLine):
+    def completeMe(self, currentLine, currentPath):
         r1 = re.findall(r"\s*(.*)\.(.*)\s*", currentLine)
         if len(r1) == 0:
             return []
