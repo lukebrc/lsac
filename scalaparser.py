@@ -5,7 +5,7 @@ class ScalaParser(object):
     def __init__(self):
         self.__objMap = {}
 
-    def parseClasses(self, lines, currentRange, currentPath):
+    def parseClasses(self, currentPath):
         self.__lines = lines
         self.__currentRange = currentRange
         currentClass = ''
@@ -40,7 +40,7 @@ class ScalaParser(object):
             i += 1
         return self.__objMap
 
-    def completeMe(self, currentLine, currentPath):
+    def completeMe(self, currentLine):
         r1 = re.findall(r"\s*(.*)\.(.*)\s*", currentLine)
         if len(r1) == 0:
             return []

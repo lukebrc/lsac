@@ -1,11 +1,5 @@
-import vim
 import sys
 import os
-
-pluginPath = vim.eval('s:pyPluginPath')
-pluginPath = os.path.realpath(pluginPath)
-if pluginPath not in sys.path:
-    sys.path.append(pluginPath)
 
 import scalaparser
 import luaparser
@@ -34,30 +28,24 @@ def startLua():
     return luaParser
 
 
-def main(argv):
+def parse(fileType, operation, currentFile, currentPos):
     parser = None
-    if argv[0] == 'scala':
+    lines = open(currentFile, 'r').readlines()
+    if fileType == 'scala':
         parser = startScala()
-    elif argv[0] == 'lua':
+    elif fileType == 'lua':
         parser = startLua()
     else:
-        raise 'Unknown filetype'
+        raise 'Unknown filetype %s' % fileType
 
-    currentPath = vim.eval('s:currentPath')
-    if sys.argv[1] == 'parse':
-        objMap = parser.parseClasses(vim.current.buffer,
-                                     vim.current.range,
-                                     currentPath)
+    if operation == 'parse':
+        objMap = parser.parseClasses(lines)
         print(objMap)
-    elif sys.argv[1] == 'complete':
-        parser.parseClasses(vim.current.buffer, vim.current.range, currentPath)
-        currentLine = vim.eval('s:currentLine')
+    elif operation == 'complete':
+        parser.parseClasses(currentFile)
         # currentWord = vim.eval('s:wordUnderCursor')
-        functions = parser.completeMe(currentLine, currentPath)
+        functions = parser.completeMe(lines[currentPos[0]], currentPos[1])
         printFunctions(functions)
     else:
-        print('Unknown argument: ' + sys.argv[0])
+        print('Unknown operation: ' + operation)
 
-
-if __name__ == "__main__":
-    main(sys.argv)

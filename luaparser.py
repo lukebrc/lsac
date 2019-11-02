@@ -5,11 +5,10 @@ class LuaParser(object):
     def __init__(self):
         self.__objMap = {}
 
-    def parseClasses(self, lines, currentRange, currentPath):
+    def parseClasses(self, currentPath):
         self.__lines = lines
         self.__currentRange = currentRange
         self.__moduleObject = self.__findModuleObject()
-        self.__currentPath = currentPath
         i = 0
         while i < len(lines):
             line = lines[i]
@@ -23,7 +22,7 @@ class LuaParser(object):
         self.__replaceModuleClass()
         return self.__objMap
 
-    def completeMe(self, currentLine, currentPath):
+    def completeMe(self, currentLine):
         r1 = re.findall(r"\s*([\w.]+)[.:](\w*)\s*", currentLine)
         if len(r1) == 0:
             return []
@@ -158,10 +157,10 @@ class LuaParser(object):
             if k.find(self.__moduleObject) == 0:
                 postfix = k[len(self.__moduleObject)+1:]
                 # _M.ClassName -> filename.ClassName
-                luaPath = self.__currentPath[0:-4].replace('/', '.')
-                if luaPath not in newObjs:
-                    newObjs[luaPath] = {}
-                newObjs[luaPath][postfix] = self.__objMap[k]
+                # luaPath = self.__currentPath[0:-4].replace('/', '.')
+                # if luaPath not in newObjs:
+                #     newObjs[luaPath] = {}
+                # newObjs[luaPath][postfix] = self.__objMap[k]
         self.__objMap.update(newObjs)
 
     @staticmethod
