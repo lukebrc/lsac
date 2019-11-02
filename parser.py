@@ -28,9 +28,8 @@ def startLua():
     return luaParser
 
 
-def parse(fileType, operation, currentFile, currentPos):
+def parseFile(fileName, fileType, currentPos):
     parser = None
-    lines = open(currentFile, 'r').readlines()
     if fileType == 'scala':
         parser = startScala()
     elif fileType == 'lua':
@@ -38,14 +37,13 @@ def parse(fileType, operation, currentFile, currentPos):
     else:
         raise 'Unknown filetype %s' % fileType
 
-    if operation == 'parse':
-        objMap = parser.parseClasses(lines)
-        print(objMap)
-    elif operation == 'complete':
-        parser.parseClasses(currentFile)
-        # currentWord = vim.eval('s:wordUnderCursor')
-        functions = parser.completeMe(lines[currentPos[0]], currentPos[1])
-        printFunctions(functions)
-    else:
-        print('Unknown operation: ' + operation)
+    parser.parseClasses(fileName)
+    print(parser.getAllObjects())
+
+def complete(fileName, currentPos):
+    raise RuntimeError('Not implemented')
+    #parser.parseClasses(currentFile)
+    #functions = parser.completeMe(lines[currentPos[0]], currentPos[1])
+    #printFunctions(functions)
+
 
