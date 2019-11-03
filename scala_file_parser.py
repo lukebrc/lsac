@@ -1,13 +1,24 @@
 from object_map import ObjectMap
+from grammar.gword import GWord
+from grammar.gname import GName
+from grammar.bracket_ext import BracketExp
+from grammar.gdefinition import GDefinition
 import re
 
+
+DEFINITIONS = [
+    GDefinition( [GWord("def"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] ),
+    GDefinition( [GWord("class"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] ),
+    GDefinition( [GAny()] )
+]
 
 class ScalaFileParser(object):
     def __init__(self, lines):
         self._lines = lines
-        self._objMap = ObjectMap()
-        self._currentClass = ''
-        self._i = 0
+        self._definitions = DEFINITIONS
+        #self._objMap = ObjectMap()
+        #self._currentClass = ''
+        #self._i = 0
 
     def parseObjects(self):
         self._currentClass = ''
