@@ -1,6 +1,7 @@
-from gdefinition import GDefinition
-from gword import GWord
-from gname import GName
+from grammar.gdefinition import GDefinition
+from grammar.gword import GWord
+from grammar.gname import GName
+from grammar.bracket_exp import BracketExp
 import unittest
 
 
@@ -32,6 +33,11 @@ class GDefinitionTest(unittest.TestCase):
         self.assertEqual(len("def Test_Fun123"), pos[1])
         self.assertEqual("Test_Fun123", defs.getDefinitions()[1].getName())
 
+    def test_bracket_exp(self):
+        defs = GDefinition( [GWord("def"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] )
+        lines = ["def TestFun_123(a, b, c) {", " print(123) ", "print(456)", "}" ]
+        pos = defs.match(lines, [0,0])
+        self.assertEqual(len(lines), pos[0])
 
 if __name__ == '__main__':
     unittest.main()

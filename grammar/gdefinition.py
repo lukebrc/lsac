@@ -1,4 +1,6 @@
-class GDefinition(object):
+from .gobject import GObject
+
+class GDefinition(GObject):
     def __init__(self, defList):
         self._defList = defList
 
@@ -6,8 +8,10 @@ class GDefinition(object):
         pos = [currentPos[0], currentPos[1]]
         for df in self._defList:
             pos2 = df.match(lines, pos)
-            if(pos2 == pos or pos2[0] >= len(lines)):
+            if(pos2 == pos):
                 return currentPos
+            if pos2[0] >= len(lines):
+                return pos2
             pos = GDefinition.movePos(lines, pos2)
         return pos
 

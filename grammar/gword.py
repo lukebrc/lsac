@@ -1,5 +1,6 @@
+from grammar.gobject import GObject
 
-class GWord(object):
+class GWord(GObject):
     def __init__(self, word):
         self._word = word
 
@@ -7,6 +8,11 @@ class GWord(object):
         row = currentPos[0]
         col = currentPos[1]
         if lines[row][col:].find(self._word) == 0:
-            return [row, col+len(self._word)]
+            col += len(self._word)
+            if col >= len(lines[row]):
+                row += 1
+                col = 0
+            self.setFound()
+            return [row, col]
         return currentPos
 
