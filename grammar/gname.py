@@ -11,8 +11,8 @@ class GName(GObject):
         c = currentPos[1]
         if r >= len(lines):
             return False
-        while GObject.isValidPos(lines, r,c):
-            if not GName.isNameChar(lines[r][c]):
+        while GObject.is_valid_pos(lines, r,c):
+            if not GName.is_name_char(lines[r][c]):
                 self.set_next_pos(r,c)
                 break
             self._name += lines[r][c]
@@ -26,6 +26,6 @@ class GName(GObject):
         return self._name
 
     @staticmethod
-    def isNameChar(char):
+    def is_name_char(char):
         return char.isalnum() or (char == '_')
 

@@ -14,7 +14,7 @@ class GType(GObject):
             return False
         (r,c) = GObject.get_next_pos(lines, r,c)
         (r,c) = GObject.skip_whitespace(lines, r, c)
-        while GObject.isValidPos(lines, r,c):
+        while GObject.is_valid_pos(lines, r,c):
             if not GType.is_type_char(lines[r][c]):
                 break
             self._type += lines[r][c]

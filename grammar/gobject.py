@@ -20,7 +20,7 @@ class GObject(ABC):
         return (r,c)
 
     @staticmethod
-    def isValidPos(lines, r, c):
+    def is_valid_pos(lines, r, c):
         if r < len(lines)-1:
             return True
         if r >= len(lines):
@@ -29,7 +29,7 @@ class GObject(ABC):
 
     @staticmethod
     def skip_whitespace(lines, r, c):
-        while(GObject.isValidPos(lines, r,c) and GObject.is_whitespace(lines, r,c)):
+        while(GObject.is_valid_pos(lines, r,c) and GObject.is_whitespace(lines, r,c)):
             (r,c) = GObject.get_next_pos(lines, r,c)
         return (r,c)
 
@@ -41,5 +41,3 @@ class GObject(ABC):
     def set_next_pos(self, r, c):
         self._current_pos = (r,c)
 
-    def isFound(self):
-        return self._current_pos != None
