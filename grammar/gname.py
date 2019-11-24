@@ -1,5 +1,6 @@
 from grammar.gobject import GObject
 
+
 class GName(GObject):
     def __init__(self):
         self._name = ''
@@ -21,7 +22,7 @@ class GName(GObject):
             return True
         return False
 
-    def getName(self):
+    def get_name(self):
         return self._name
 
     @staticmethod

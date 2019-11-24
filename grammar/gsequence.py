@@ -1,5 +1,6 @@
 from .gobject import GObject
 
+
 class GSequence(GObject):
     def __init__(self, defList):
         self._defList = defList

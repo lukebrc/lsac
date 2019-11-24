@@ -27,7 +27,7 @@ class GSequenceTest(unittest.TestCase):
         self.assertTrue( defs.match(lines, [0,0]) )
         pos = defs.get_current_pos()
         self.assertEqual(1, pos[0])
-        self.assertEqual("Test_Fun123", defs.get_definitions()[1].getName())
+        self.assertEqual("Test_Fun123", defs.get_definitions()[1].get_name())
 
     def test_def_fun_incomplete(self):
         defs = GSequence( [GWord("def"), GName() ])
@@ -36,7 +36,7 @@ class GSequenceTest(unittest.TestCase):
         pos = defs.get_current_pos()
         self.assertEqual(0, pos[0])
         self.assertEqual(len("def Test_Fun123"), pos[1])
-        self.assertEqual("Test_Fun123", defs.get_definitions()[1].getName())
+        self.assertEqual("Test_Fun123", defs.get_definitions()[1].get_name())
 
     def test_optional(self):
         defs = GSequence( [GWord("def"), GName(), GOptional(GWord(":")), GName(), GWord("{")] )

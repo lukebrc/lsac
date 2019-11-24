@@ -6,7 +6,7 @@ class GWordTest(unittest.TestCase):
         obj = GName()
         lines = ["a"]
         self.assertTrue( obj.match(lines, [0,0]) )
-        self.assertEqual("a", obj.getName())
+        self.assertEqual("a", obj.get_name())
         pos = obj.get_current_pos()
         self.assertEqual(1, pos[0])
 
@@ -22,5 +22,5 @@ class GWordTest(unittest.TestCase):
         lines = ["", "aBBa"]
         self.assertTrue( obj.match(lines, [1,0]) )
         pos = obj.get_current_pos()
-        self.assertEqual("aBBa", obj.getName())
+        self.assertEqual("aBBa", obj.get_name())
         self.assertEqual(2, pos[0])

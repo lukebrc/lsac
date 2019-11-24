@@ -27,6 +27,6 @@ class GChoiceTest(unittest.TestCase):
         seq = GSequence( [tchoice, name, def_choice] )
         lines = ["int num;"]
         self.assertTrue( seq.match(lines, [0,0]) )
-        self.assertEqual("num", name.getName())
+        self.assertEqual("num", name.get_name())
         self.assertEqual(int_choose, tchoice.get_chosen())
 
