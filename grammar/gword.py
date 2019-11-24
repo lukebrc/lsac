@@ -12,7 +12,7 @@ class GWord(GObject):
             if col >= len(lines[row]):
                 row += 1
                 col = 0
-            self.setFound()
-            return [row, col]
-        return currentPos
+            self.set_next_pos(row, col)
+            return True
+        return False
 

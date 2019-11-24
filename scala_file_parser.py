@@ -7,9 +7,11 @@ from grammar.gany import GAny
 import re
 
 
+SCALA_TYPE = GDefinition( [GWord(":"), GName] )
+
 DEFINITIONS = [
-    GDefinition( [GWord("def"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] ),
     GDefinition( [GWord("class"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] ),
+    GDefinition( [GWord("def"), GName(), BracketExp("(", ")"), GOptional(SCALA_TYPE), BracketExp("{", "}") ] ),
     GDefinition( [GAny()] )
 ]
 

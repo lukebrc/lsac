@@ -1,8 +1,8 @@
 from grammar.gobject import GObject
 
-class GName(GObject):
+class GType(GObject):
     def __init__(self):
-        self._name = ''
+        self._type = ''
 
     def match(self, lines, currentPos):
         self._name = ''
@@ -10,21 +10,23 @@ class GName(GObject):
         c = currentPos[1]
         if r >= len(lines):
             return False
+        if lines[r][c] != ':':
+            return False
+        (r,c) = GObject.get_next_pos(lines, r,c)
+        (r,c) = GObject.skip_whitespace(lines, r, c)
         while GObject.isValidPos(lines, r,c):
-            if not GName.isNameChar(lines[r][c]):
-                self.set_next_pos(r,c)
+            if not GType.is_type_char(lines[r][c]):
                 break
-            self._name += lines[r][c]
+            self._type += lines[r][c]
             (r,c) = GObject.get_next_pos(lines, r, c)
-        if len(self._name) > 0:
+        if len(self._type) > 0:
             self.set_next_pos(r,c)
             return True
         return False
 
-    def getName(self):
-        return self._name
+    def get_type(self):
+        return self._type
 
     @staticmethod
-    def isNameChar(char):
+    def is_type_char(char):
         return char.isalnum() or (char == '_')
-
