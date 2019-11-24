@@ -4,10 +4,9 @@ class GType(GObject):
     def __init__(self):
         self._type = ''
 
-    def match(self, lines, currentPos):
+    def match(self, lines, r,c):
         self._name = ''
-        r = currentPos[0]
-        c = currentPos[1]
+
         if r >= len(lines):
             return False
         if lines[r][c] != ':':

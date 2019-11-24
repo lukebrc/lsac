@@ -5,7 +5,7 @@ class GObject(ABC):
         self._current_pos = None
 
     @abstractmethod
-    def match(self, lines, currentPos):
+    def match(self, lines, r,c):
         pass
 
     def get_current_pos(self):

@@ -8,9 +8,7 @@ class BracketExp(GObject):
         self._rbrace_count = 0
         self._body = ''
 
-    def match(self, lines, currentPos):
-        r = currentPos[0]
-        c = currentPos[1]
+    def match(self, lines, r,c):
         if lines[r][c] != self._lbrace:
             return False
         while True:

@@ -6,13 +6,12 @@ import unittest
 
 
 class GChoiceTest(unittest.TestCase):
-
     def test_single_word(self):
         a = GWord("A")
         b = GWord("B")
         obj = GChoice( [a, b] )
         lines = ["B"]
-        self.assertTrue( obj.match(lines, [0,0]) )
+        self.assertTrue( obj.match(lines, 0,0) )
         pos = obj.get_current_pos()
         self.assertEqual(1, pos[0])
         self.assertEqual(b, obj.get_chosen())
@@ -26,7 +25,7 @@ class GChoiceTest(unittest.TestCase):
         name = GName()
         seq = GSequence( [tchoice, name, def_choice] )
         lines = ["int num;"]
-        self.assertTrue( seq.match(lines, [0,0]) )
+        self.assertTrue( seq.match(lines, 0,0) )
         self.assertEqual("num", name.get_name())
         self.assertEqual(int_choose, tchoice.get_chosen())
 

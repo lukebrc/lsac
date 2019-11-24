@@ -5,10 +5,8 @@ class GName(GObject):
     def __init__(self):
         self._name = ''
 
-    def match(self, lines, currentPos):
+    def match(self, lines, r,c):
         self._name = ''
-        r = currentPos[0]
-        c = currentPos[1]
         if r >= len(lines):
             return False
         while GObject.is_valid_pos(lines, r,c):
