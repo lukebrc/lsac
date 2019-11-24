@@ -1,4 +1,4 @@
-from grammar.gdefinition import GDefinition
+from grammar.gsequence import GSequence
 from grammar.gword import GWord
 from grammar.gtype import GType
 from grammar.gname import GName
@@ -7,22 +7,22 @@ from grammar.bracket_exp import BracketExp
 import unittest
 
 
-class GDefinitionTest(unittest.TestCase):
+class GSequenceTest(unittest.TestCase):
 
     def test_3_words(self):
-        defs = GDefinition( [GWord("def"), GWord("def"), GWord("def")] )
+        defs = GSequence( [GWord("def"), GWord("def"), GWord("def")] )
         lines = ["def def", "   def"]
         self.assertTrue( defs.match(lines, [0,0]) )
         pos = defs.get_current_pos()
         self.assertEqual(2, pos[0], "Position should be after last line")
 
     def test_3_words_invalid(self):
-        defs = GDefinition( [GWord("def"), GWord("def"), GWord("def")] )
+        defs = GSequence( [GWord("def"), GWord("def"), GWord("def")] )
         lines = ["def def", "   abc"]
         self.assertFalse( defs.match(lines, [0,0]) )
 
     def test_def_name(self):
-        defs = GDefinition( [GWord("def"), GName() ])
+        defs = GSequence( [GWord("def"), GName() ])
         lines = ["def Test_Fun123", ""]
         self.assertTrue( defs.match(lines, [0,0]) )
         pos = defs.get_current_pos()
@@ -30,7 +30,7 @@ class GDefinitionTest(unittest.TestCase):
         self.assertEqual("Test_Fun123", defs.get_definitions()[1].getName())
 
     def test_def_fun_incomplete(self):
-        defs = GDefinition( [GWord("def"), GName() ])
+        defs = GSequence( [GWord("def"), GName() ])
         lines = ["def Test_Fun123(a: Integer)", ""]
         self.assertTrue( defs.match(lines, [0,0]) )
         pos = defs.get_current_pos()
@@ -39,7 +39,7 @@ class GDefinitionTest(unittest.TestCase):
         self.assertEqual("Test_Fun123", defs.get_definitions()[1].getName())
 
     def test_optional(self):
-        defs = GDefinition( [GWord("def"), GName(), GOptional(GWord(":")), GName(), GWord("{")] )
+        defs = GSequence( [GWord("def"), GName(), GOptional(GWord(":")), GName(), GWord("{")] )
         lines = ["def test: test_name {"]
         self.assertTrue( defs.match(lines, [0,0]) )
         pos = defs.get_current_pos()
@@ -48,28 +48,28 @@ class GDefinitionTest(unittest.TestCase):
         self.assertFalse( defs.match(lines, [0,0]) )
 
     def test_bracket_exp(self):
-        defs = GDefinition( [GWord("def"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] )
+        defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] )
         lines = ["def TestFun_123(a, b, c) {", " print(123) ", "print(456)", "}" ]
         self.assertTrue( defs.match(lines, [0,0]) )
         pos = defs.get_current_pos()
         self.assertEqual(len(lines), pos[0])
 
     def test_bracket_exp2(self):
-        defs = GDefinition( [GWord("def"), GName(), BracketExp("(", ")"), GType() ] )
+        defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")"), GType() ] )
         lines = ["def TestFun_123(a, b, c) :Unit"]
         self.assertTrue( defs.match(lines, (0,0)) )
         pos = defs.get_current_pos()
         self.assertEqual(len(lines), pos[0])
 
     def test_bracket_exp3(self):
-        defs = GDefinition( [GWord("def"), GName(), BracketExp("(", ")"), GType(), GWord("="), BracketExp("{", "}") ] )
+        defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")"), GType(), GWord("="), BracketExp("{", "}") ] )
         lines = ["def TestFun_123(a, b, c) :Unit = {", " print(123) ", "print(456)", "}" ]
         self.assertTrue( defs.match(lines, [0,0]) )
         pos = defs.get_current_pos()
         self.assertEqual(len(lines), pos[0])
 
     def test_nested_bracket_exps(self):
-        defs = GDefinition( [GWord("def"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] )
+        defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] )
         nestedFun = "def hello() { print(\"hello\") }"
         lines = ["def TestFun_123(a, b, c) {", nestedFun, "}" ]
         self.assertTrue( defs.match(lines, [0,0]) )

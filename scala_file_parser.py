@@ -2,17 +2,17 @@ from object_map import ObjectMap
 from grammar.gword import GWord
 from grammar.gname import GName
 from grammar.bracket_exp import BracketExp
-from grammar.gdefinition import GDefinition
+from grammar.gsequence import GSequence
 from grammar.gany import GAny
 import re
 
 
-SCALA_TYPE = GDefinition( [GWord(":"), GName] )
+SCALA_TYPE = GSequence( [GWord(":"), GName] )
 
 DEFINITIONS = [
-    GDefinition( [GWord("class"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] ),
-    GDefinition( [GWord("def"), GName(), BracketExp("(", ")"), GOptional(SCALA_TYPE), BracketExp("{", "}") ] ),
-    GDefinition( [GAny()] )
+    GSequence( [GWord("class"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] ),
+    GSequence( [GWord("def"), GName(), BracketExp("(", ")"), GOptional(SCALA_TYPE), BracketExp("{", "}") ] ),
+    GSequence( [GAny()] )
 ]
 
 class ScalaFileParser(object):
