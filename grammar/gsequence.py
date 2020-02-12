@@ -16,3 +16,10 @@ class GSequence(GObject):
 
     def get_definitions(self):
         return self._defList
+
+    def __str__(self):
+        seq_str = "GSequence("
+        for df in self._defList:
+            seq_str += str(df)
+        list_str = map(str, self._defList)
+        return "GSequence({})".format(",".join(list_str))

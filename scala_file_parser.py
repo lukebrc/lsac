@@ -4,6 +4,7 @@ from grammar.gname import GName
 from grammar.bracket_exp import BracketExp
 from grammar.gsequence import GSequence
 from grammar.gany import GAny
+from grammar.goptional import GOptional
 import re
 
 
@@ -26,8 +27,16 @@ class ScalaFileParser(object):
     def parseObjects(self):
         self._currentClass = ''
         self._i = 0
+        pos = [0,0]
         while self._i < len(self._lines):
-            self._parseLine(self._lines[self._i])
+            for definition in DEFINITIONS:
+                print(definition)
+                if definition.match(self._lines, pos[0], pos[1]):
+                    pos = definition.get_current_pos()
+                    print("matches: pos {}", pos)
+                    print("parsed definition: {}".format(definition))
+                    continue
+        raise Exception('Not implemented')
         return self._objMap
 
     def _parseLine(self, line):
@@ -117,5 +126,4 @@ class ScalaFileParser(object):
     def _isVarDef(line):
         r1 = re.findall(r"\s*va[rl]\s+(\w+)(\s*:\s*\w+)?\s*=(.*)", line)
         return len(r1) > 0
-
 

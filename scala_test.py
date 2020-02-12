@@ -1,9 +1,13 @@
 import scalaparser
 
 parser = scalaparser.ScalaParser()
-lines = '''class A {
-    private var _a: A = null
+#lines = '''class A {
+#    private var _a: A = null
+#}'''.split('\n')
+
+lines = '''class A() {
 }'''.split('\n')
-objMap = parser.parseClasses(lines, 0)
+
+objMap = parser.parseClasses(lines)
 assert('A' in objMap)
 assert('_a' in objMap['A'])

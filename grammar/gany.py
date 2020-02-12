@@ -6,3 +6,5 @@ class GAny(GObject):
         self.set_next_pos(r+1,0)
         return True
 
+    def __str__(self):
+        return "GAny()"

@@ -13,3 +13,6 @@ class GOptional(GObject):
             pos = self._object.get_current_pos()
             self.set_next_pos(pos[0], pos[1])
         return True
+
+    def __str__(self):
+        return "GOptional({})".format(self._foundObj or "")

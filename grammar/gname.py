@@ -27,3 +27,5 @@ class GName(GObject):
     def is_name_char(char):
         return char.isalnum() or (char == '_')
 
+    def __str__(self):
+        return "GName({})".format(self._name)

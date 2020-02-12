@@ -7,9 +7,13 @@ class ScalaParser(object):
     def __init__(self):
         self._classesMap = ClassesMap()
 
-    def parseClasses(self, fileName):
+    def parseFileClasses(self, fileName):
         with open(fileName, 'r') as file:
             lines = file.readlines()
+            self.parseClasses(lines)
+
+
+    def parseClasses(self, lines):
         fileParser = ScalaFileParser(lines)
         objects = fileParser.parseObjects()
         self._classesMap.addObjects(fileName, objects)

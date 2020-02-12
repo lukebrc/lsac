@@ -11,6 +11,8 @@ class BracketExp(GObject):
     def match(self, lines, r,c):
         if lines[r][c] != self._lbrace:
             return False
+        self._lbrace_count = 1
+        (r,c) = GObject.get_next_pos(lines, r, c)
         while True:
             if lines[r][c] == self._lbrace:
                 self._lbrace_count += 1
@@ -24,3 +26,5 @@ class BracketExp(GObject):
                 return False
             self._body += lines[r][c]
 
+    def __str__(self):
+        return self._lbrace + str(self._body) + self._rbrace

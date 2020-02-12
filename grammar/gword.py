@@ -15,3 +15,5 @@ class GWord(GObject):
             return True
         return False
 
+    def __str__(self):
+        return '"{}"'.format(self._word)
