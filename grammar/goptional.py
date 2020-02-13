@@ -6,13 +6,24 @@ class GOptional(GObject):
         self._object = obj
         self._foundObj = None
 
-    def match(self, lines, r,c):
+    def do_match(self, lines, r,c):
         doMatch = self._object.match(lines, r,c)
         if doMatch:
             self._foundObj = self._object
-            pos = self._object.get_current_pos()
-            self.set_next_pos(pos[0], pos[1])
-        return True
+            self._start_pos = self._foundObj.get_start_pos()
+            self._end_pos = self._foundObj.get_end_pos()
+            return self.get_end_pos()
+        return GOptional._get_previous_pos(lines, r,c)
 
     def __str__(self):
         return "GOptional({})".format(self._foundObj or "")
+
+    def _get_previous_pos(self, lines, r,c):
+        if( c > 0 ):
+            return (r,c)
+        if r == 0:
+            return (0,0)
+        r -= 1
+        c = len(lines[r]) - 1
+        return (r,c)
+

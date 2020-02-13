@@ -19,7 +19,10 @@ DEFINITIONS = [
 class ScalaFileParser(object):
     def __init__(self, lines):
         self._lines = lines
+        for df in DEFINITIONS:
+            df.set_recursive_definitions(DEFINITIONS)
         self._definitions = DEFINITIONS
+
         #self._objMap = ObjectMap()
         #self._currentClass = ''
         #self._i = 0
@@ -32,7 +35,7 @@ class ScalaFileParser(object):
             for definition in DEFINITIONS:
                 print(definition)
                 if definition.match(self._lines, pos[0], pos[1]):
-                    pos = definition.get_current_pos()
+                    pos = definition.get_end_pos()
                     print("matches: pos {}", pos)
                     print("parsed definition: {}".format(definition))
                     continue

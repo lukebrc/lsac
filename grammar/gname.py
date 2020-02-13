@@ -5,20 +5,19 @@ class GName(GObject):
     def __init__(self):
         self._name = ''
 
-    def match(self, lines, r,c):
+    def do_match(self, lines, r,c):
         self._name = ''
         if r >= len(lines):
-            return False
+            return None
         while GObject.is_valid_pos(lines, r,c):
             if not GName.is_name_char(lines[r][c]):
-                self.set_next_pos(r,c)
                 break
             self._name += lines[r][c]
+            end_pos = (r,c)
             (r,c) = GObject.get_next_pos(lines, r, c)
         if len(self._name) > 0:
-            self.set_next_pos(r,c)
-            return True
-        return False
+            return end_pos
+        return None
 
     def get_name(self):
         return self._name

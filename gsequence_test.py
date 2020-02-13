@@ -13,8 +13,7 @@ class GSequenceTest(unittest.TestCase):
         defs = GSequence( [GWord("def"), GWord("def"), GWord("def")] )
         lines = ["def def", "   def"]
         self.assertTrue( defs.match(lines, 0,0) )
-        pos = defs.get_current_pos()
-        self.assertEqual(2, pos[0], "Position should be after last line")
+        self.assertEqual((1,len(lines[1])-1), defs.get_end_pos(), "Position should be in last line")
 
     def test_3_words_invalid(self):
         defs = GSequence( [GWord("def"), GWord("def"), GWord("def")] )
@@ -25,7 +24,7 @@ class GSequenceTest(unittest.TestCase):
         defs = GSequence( [GWord("def"), GName() ])
         lines = ["def Test_Fun123", ""]
         self.assertTrue( defs.match(lines, 0,0) )
-        pos = defs.get_current_pos()
+        pos = defs.get_end_pos()
         self.assertEqual(1, pos[0])
         self.assertEqual("Test_Fun123", defs.get_definitions()[1].get_name())
 
@@ -33,7 +32,7 @@ class GSequenceTest(unittest.TestCase):
         defs = GSequence( [GWord("def"), GName() ])
         lines = ["def Test_Fun123(a: Integer)", ""]
         self.assertTrue( defs.match(lines, 0,0) )
-        pos = defs.get_current_pos()
+        pos = defs.get_end_pos()
         self.assertEqual(0, pos[0])
         self.assertEqual(len("def Test_Fun123"), pos[1])
         self.assertEqual("Test_Fun123", defs.get_definitions()[1].get_name())
@@ -42,7 +41,7 @@ class GSequenceTest(unittest.TestCase):
         defs = GSequence( [GWord("def"), GName(), GOptional(GWord(":")), GName(), GWord("{")] )
         lines = ["def test: test_name {"]
         self.assertTrue( defs.match(lines, 0,0) )
-        pos = defs.get_current_pos()
+        pos = defs.get_end_pos()
         self.assertEqual(1, pos[0])
         lines = ["def test {"]
         self.assertFalse( defs.match(lines, 0,0) )
@@ -51,21 +50,21 @@ class GSequenceTest(unittest.TestCase):
         defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] )
         lines = ["def TestFun_123(a, b, c) {", " print(123) ", "print(456)", "}" ]
         self.assertTrue( defs.match(lines, 0,0) )
-        pos = defs.get_current_pos()
+        pos = defs.get_end_pos()
         self.assertEqual(len(lines), pos[0])
 
     def test_bracket_exp2(self):
         defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")"), GType() ] )
         lines = ["def TestFun_123(a, b, c) :Unit"]
         self.assertTrue( defs.match(lines, 0,0) )
-        pos = defs.get_current_pos()
+        pos = defs.get_end_pos()
         self.assertEqual(len(lines), pos[0])
 
     def test_bracket_exp3(self):
         defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")"), GType(), GWord("="), BracketExp("{", "}") ] )
         lines = ["def TestFun_123(a, b, c) :Unit = {", " print(123) ", "print(456)", "}" ]
         self.assertTrue( defs.match(lines, 0,0) )
-        pos = defs.get_current_pos()
+        pos = defs.get_end_pos()
         self.assertEqual(len(lines), pos[0])
 
     def test_nested_bracket_exps(self):
@@ -73,7 +72,7 @@ class GSequenceTest(unittest.TestCase):
         nestedFun = "def hello() { print(\"hello\") }"
         lines = ["def TestFun_123(a, b, c) {", nestedFun, "}" ]
         self.assertTrue( defs.match(lines, 0,0) )
-        pos = defs.get_current_pos()
+        pos = defs.get_end_pos()
         self.assertEqual(len(lines), pos[0])
 
 

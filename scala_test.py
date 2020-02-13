@@ -6,6 +6,7 @@ parser = scalaparser.ScalaParser()
 #}'''.split('\n')
 
 lines = '''class A() {
+    def fun() {}
 }'''.split('\n')
 
 objMap = parser.parseClasses(lines)
