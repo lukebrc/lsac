@@ -5,7 +5,7 @@ class GSequence(GObject):
     def __init__(self, defList):
         self._defList = defList
 
-    def do_match(self, lines, r,c):
+    def find_end_pos(self, lines, r,c):
         for i in range(0, len(self._defList)):
             df = self._defList[i]
             (r,c) = GObject.skip_whitespace(lines, r, c)

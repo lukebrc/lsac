@@ -8,7 +8,7 @@ class GObject(ABC):
     def match(self, lines, r,c):
         (r,c) = GObject.skip_whitespace(lines, r, c)
         start_pos = (r,c)
-        end_pos = self.do_match(lines, r,c)
+        end_pos = self.find_end_pos(lines, r,c)
         if end_pos is not None:
             self._start_pos = start_pos
             self._end_pos = end_pos
@@ -18,7 +18,7 @@ class GObject(ABC):
     # sprawdz czy znaleziono ten obiekt w lines poczynajac od pozycji (r,c)
     # jesli tak, to zwroc koncowa pozycje, w.p.p. None
     @abstractmethod
-    def do_match(self, lines, r,c):
+    def find_end_pos(self, lines, r,c):
         pass
 
     def get_start_pos(self):

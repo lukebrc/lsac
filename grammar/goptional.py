@@ -6,7 +6,7 @@ class GOptional(GObject):
         self._object = obj
         self._foundObj = None
 
-    def do_match(self, lines, r,c):
+    def find_end_pos(self, lines, r,c):
         doMatch = self._object.match(lines, r,c)
         if doMatch:
             self._foundObj = self._object
