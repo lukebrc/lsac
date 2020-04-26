@@ -16,6 +16,7 @@ DEFINITIONS = [
     GSequence( [GAny()] )
 ]
 
+
 class ScalaFileParser(object):
     def __init__(self, lines):
         self._lines = lines
@@ -27,7 +28,7 @@ class ScalaFileParser(object):
         #self._currentClass = ''
         #self._i = 0
 
-    def parseObjects(self):
+    def parse_objects(self):
         self._currentClass = ''
         self._i = 0
         pos = [0,0]

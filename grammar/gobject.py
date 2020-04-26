@@ -1,14 +1,16 @@
 from abc import ABC, abstractmethod
+from iterator.text_iterator import TextIterator
+
 
 class GObject(ABC):
     def __init__(self):
         self._start_pos = None
         self._end_pos = None
 
-    def match(self, lines, r,c):
-        (r,c) = GObject.skip_whitespace(lines, r, c)
-        start_pos = (r,c)
-        end_pos = self.find_end_pos(lines, r,c)
+    def match(self, text_iterator: TextIterator):
+        text_iterator.skip_whitespace()
+        start_pos = text_iterator.current_pos().copy()
+        end_pos = self.find_end_pos(text_iterator)
         if end_pos is not None:
             self._start_pos = start_pos
             self._end_pos = end_pos
@@ -18,7 +20,7 @@ class GObject(ABC):
     # sprawdz czy znaleziono ten obiekt w lines poczynajac od pozycji (r,c)
     # jesli tak, to zwroc koncowa pozycje, w.p.p. None
     @abstractmethod
-    def find_end_pos(self, lines, r,c):
+    def find_end_pos(self, text_iterator):
         pass
 
     def get_start_pos(self):
@@ -28,45 +30,17 @@ class GObject(ABC):
         return self._end_pos
 
     @staticmethod
-    def get_next_pos(lines, r, c):
-        c += 1
-        if c >= len(lines[r]):
-            c = 0
-            r += 1
-        return (r,c)
-
-    @staticmethod
-    def is_valid_pos(lines, r, c):
-        if r < len(lines)-1:
-            return True
-        if r >= len(lines):
-            return False
-        return c < len( lines[r] )
-
-    @staticmethod
-    def skip_whitespace(lines, r, c):
-        while(GObject.is_valid_pos(lines, r,c) and GObject.is_whitespace(lines, r,c)):
-            (r,c) = GObject.get_next_pos(lines, r,c)
-        return (r,c)
-
-    @staticmethod
-    def is_whitespace(lines, r,c):
-        c = lines[r][c]
-        return c == ' ' or c == '\t' or c == '\n'
-
-    @staticmethod
     def parse_definitions(lines, definitions):
-        (r,c) = (0,0)
+        t = TextIterator(lines)
         def_list = []
-        while r < len(lines):
-            for definition in definitions:
-                print(definition)
-                if definition.match(lines, r, c):
-                    (r,c) = definition.get_end_pos()
-                    def_list.append(definition)
-                    print("matches: pos {}", (r,c))
-                    print("parsed definition: {}".format(definition))
-                    continue
+        for definition in definitions:
+            print(definition)
+            if definition.match(t):
+                end_pos = definition.get_end_pos()
+                def_list.append(definition)
+                print("matches: pos {}", end_pos)
+                print("parsed definition: {}".format(definition))
+                continue
         if len(def_list) == 0:
             return GAny()
         if len(def_list) == 1:

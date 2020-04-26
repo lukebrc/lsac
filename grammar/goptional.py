@@ -18,7 +18,7 @@ class GOptional(GObject):
     def __str__(self):
         return "GOptional({})".format(self._foundObj or "")
 
-    def _get_previous_pos(self, lines, r,c):
+    def _get_previous_pos(lines, r,c):
         if( c > 0 ):
             return (r,c)
         if r == 0:

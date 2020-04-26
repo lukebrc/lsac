@@ -25,7 +25,7 @@ class GSequenceTest(unittest.TestCase):
         lines = ["def Test_Fun123", ""]
         self.assertTrue( defs.match(lines, 0,0) )
         pos = defs.get_end_pos()
-        self.assertEqual(1, pos[0])
+        self.assertEqual((0,14), pos)
         self.assertEqual("Test_Fun123", defs.get_definitions()[1].get_name())
 
     def test_def_fun_incomplete(self):
@@ -37,17 +37,29 @@ class GSequenceTest(unittest.TestCase):
         self.assertEqual(len("def Test_Fun123"), pos[1])
         self.assertEqual("Test_Fun123", defs.get_definitions()[1].get_name())
 
-    def test_optional(self):
+    def test_optional_type(self):
         defs = GSequence( [GWord("def"), GName(), GOptional(GWord(":")), GName(), GWord("{")] )
         lines = ["def test: test_name {"]
         self.assertTrue( defs.match(lines, 0,0) )
         pos = defs.get_end_pos()
-        self.assertEqual(1, pos[0])
+        self.assertEqual((0,20), pos)
+
+    def test_optional_invalid(self):
+        defs = GSequence( [GWord("def"), GName(), GOptional(GWord(":")), GName(), GWord("{")] )
         lines = ["def test {"]
         self.assertFalse( defs.match(lines, 0,0) )
 
-    def test_bracket_exp(self):
+    def test_bracket_exp1(self):
+        defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")") ] )
+        defs.set_recursive_definitions([defs])
+        lines = ["def TestFun_123(a, b, c) "]
+        self.assertTrue( defs.match(lines, 0,0) )
+        pos = defs.get_end_pos()
+        self.assertEqual((0,len(lines[0]-2)), pos)
+
+    def test_bracket_exp2(self):
         defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] )
+        defs.set_recursive_definitions([defs])
         lines = ["def TestFun_123(a, b, c) {", " print(123) ", "print(456)", "}" ]
         self.assertTrue( defs.match(lines, 0,0) )
         pos = defs.get_end_pos()

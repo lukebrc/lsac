@@ -1,20 +1,17 @@
+from iterator.text_iterator import TextIterator
 from .gobject import GObject
 
 
 class GSequence(GObject):
-    def __init__(self, defList):
-        self._defList = defList
+    def __init__(self, def_list):
+        self._defList = def_list
 
-    def find_end_pos(self, lines, r,c):
+    def find_end_pos(self, text_iterator: TextIterator):
         for i in range(0, len(self._defList)):
             df = self._defList[i]
-            (r,c) = GObject.skip_whitespace(lines, r, c)
-            if not df.match(lines, r,c):
+            if not df.match(text_iterator):
                 return None
-            (r,c) = df.get_end_pos()
-            if i != len(self._defList)-1:
-                (r,c) = GObject.get_next_pos(lines, r,c)
-        return (r,c)
+        return text_iterator.current_pos()
 
     def get_definitions(self):
         return self._defList

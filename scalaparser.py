@@ -15,7 +15,7 @@ class ScalaParser(object):
 
     def parseClasses(self, lines):
         fileParser = ScalaFileParser(lines)
-        objects = fileParser.parseObjects()
+        objects = fileParser.parse_objects()
         self._classesMap.addObjects(fileName, objects)
 
     def getAllObjects(self):
