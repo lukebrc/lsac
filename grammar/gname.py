@@ -13,10 +13,10 @@ class GName(GObject):
             if not GName.is_name_char(lines[r][c]):
                 break
             self._name += lines[r][c]
-            end_pos = (r,c)
+            last_pos = (r,c)
             (r,c) = GObject.get_next_pos(lines, r, c)
         if len(self._name) > 0:
-            return end_pos
+            return last_pos
         return None
 
     def get_name(self):

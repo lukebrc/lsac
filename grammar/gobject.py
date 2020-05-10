@@ -11,10 +11,10 @@ class GObject(ABC):
     def match(self, text_iterator: TextIterator):
         text_iterator.skip_whitespace()
         start_pos = text_iterator.current_pos().copy()
-        end_pos = self.find_last_pos(text_iterator)
-        if end_pos is not None:
+        last_pos = self.find_last_pos(text_iterator)
+        if last_pos is not None:
             self._start_pos = start_pos
-            self._last_pos = end_pos
+            self._last_pos = last_pos
             return True
         return False
 
@@ -37,9 +37,9 @@ class GObject(ABC):
         for definition in definitions:
             print(definition)
             if definition.match(t):
-                end_pos = definition.get_last_pos()
+                last_pos = definition.get_last_pos()
                 def_list.append(definition)
-                print("matches: pos {}", end_pos)
+                print("matches: pos {}", last_pos)
                 print("parsed definition: {}".format(definition))
                 continue
         if len(def_list) == 0:

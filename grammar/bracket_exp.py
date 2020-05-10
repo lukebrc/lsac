@@ -20,7 +20,7 @@ class BracketExp(GObject):
         log.debug("match start")
         if self._find_matching_braces(text_iterator):
             content_start = self._start_pos.move(1, text_iterator.get_lines())
-            content_end = self._end_pos.move(-1, text_iterator.get_lines())
+            content_end = self._last_pos.move(-1, text_iterator.get_lines())
             inside_text = text_iterator.get_substr(content_start, content_end)
             log.debug("Parsing inside definition {}\n".format(inside_text))
             if self._definitions is not None:
@@ -59,7 +59,7 @@ class BracketExp(GObject):
             elif char == self._rbrace:
                 self._rbrace_count += 1
             if self._lbrace_count == self._rbrace_count:
-                self._end_pos = text_iterator.current_pos()
+                self._last_pos = text_iterator.current_pos()
                 return True
         log.debug("end reached: {}\n".format(text_iterator.current_pos))
         return False

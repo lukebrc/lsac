@@ -21,7 +21,7 @@ class GAny(GObject):
             if text_iterator.is_after_end() or text_iterator.eol_reached():
                 break
             next(text_iterator)
-        self._end_pos = text_iterator.current_pos().copy()
+        self._last_pos = text_iterator.current_pos().copy()
         if not text_iterator.is_after_end():
             next(text_iterator)
         return True
