@@ -6,7 +6,7 @@ class GSequence(GObject):
     def __init__(self, def_list):
         self._defList = def_list
 
-    def find_end_pos(self, text_iterator: TextIterator):
+    def find_last_pos(self, text_iterator: TextIterator):
         for i in range(0, len(self._defList)):
             df = self._defList[i]
             if not df.match(text_iterator):

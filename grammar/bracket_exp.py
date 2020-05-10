@@ -31,7 +31,7 @@ class BracketExp(GObject):
             return True
         return False
 
-    def find_end_pos(self, lines, r,c):
+    def find_last_pos(self, lines, r, c):
         raise NotImplementedError()
 
     def get_body(self):

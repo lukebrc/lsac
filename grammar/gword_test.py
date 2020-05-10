@@ -9,7 +9,7 @@ class GWordTest(unittest.TestCase):
         text = "a"
         text_iterator = TextIterator(text)
         self.assertTrue(obj.match(text_iterator))
-        self.assertEqual((0,1), obj.get_end_pos().tuple())
+        self.assertEqual((0, 0), obj.get_last_pos().tuple())
 
     def test_two_chars(self):
         obj = GWord("aB")
@@ -17,4 +17,4 @@ class GWordTest(unittest.TestCase):
         text_iterator = TextIterator(text)
         self.assertTrue(obj.match(text_iterator))
         self.assertEqual((0, 0), obj.get_start_pos().tuple())
-        self.assertEqual((0, 1), obj.get_end_pos().tuple())
+        self.assertEqual((0, 1), obj.get_last_pos().tuple())

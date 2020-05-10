@@ -36,7 +36,7 @@ class ScalaFileParser(object):
             for definition in DEFINITIONS:
                 print(definition)
                 if definition.match(self._lines, pos[0], pos[1]):
-                    pos = definition.get_end_pos()
+                    pos = definition.get_last_pos()
                     print("matches: pos {}", pos)
                     print("parsed definition: {}".format(definition))
                     continue

@@ -6,7 +6,7 @@ class GWord(GObject):
     def __init__(self, word):
         self._word = word
 
-    def find_end_pos(self, text_iterator: TextIterator):
+    def find_last_pos(self, text_iterator: TextIterator):
         for i in range(0, len(self._word)):
             v = next(text_iterator)
             if v != self._word[i]:

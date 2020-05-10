@@ -16,7 +16,7 @@ class BracketExpTest(unittest.TestCase):
         text = "(a,b,c)"
         text_iterator = TextIterator(text)
         self.assertTrue(exp.match(text_iterator))
-        pos = exp.get_end_pos()
+        pos = exp.get_last_pos()
         self.assertEqual((1, 0), pos.tuple())
         body = exp.get_body().get_text()
         self.assertEqual("a,b,c", body)
@@ -26,7 +26,7 @@ class BracketExpTest(unittest.TestCase):
         text = "()"
         text_iterator = TextIterator(text)
         self.assertTrue(exp.match(text_iterator))
-        pos = exp.get_end_pos()
+        pos = exp.get_last_pos()
         self.assertEqual((1,0), pos.tuple())
         body = exp.get_body().get_text()
         self.assertEqual("", body)

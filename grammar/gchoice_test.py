@@ -12,7 +12,7 @@ class GChoiceTest(unittest.TestCase):
         obj = GChoice( [a, b] )
         lines = ["B"]
         self.assertTrue( obj.match(lines, 0,0) )
-        pos = obj.get_end_pos()
+        pos = obj.get_last_pos()
         self.assertEqual(1, pos[0])
         self.assertEqual(b, obj.get_chosen())
 

@@ -14,7 +14,7 @@ class GAnyTest(unittest.TestCase):
         text_iterator = TextIterator(text)
         gany = GAny()
         self.assertTrue(gany.match(text_iterator))
-        pos = gany.get_end_pos()
+        pos = gany.get_last_pos()
         self.assertEqual((0, 0), pos.tuple())
         self.assertEqual("", gany.get_text())
 
@@ -23,6 +23,6 @@ class GAnyTest(unittest.TestCase):
         text_iterator = TextIterator(text)
         gany = GAny()
         self.assertTrue(gany.match(text_iterator))
-        pos = gany.get_end_pos()
+        pos = gany.get_last_pos()
         self.assertEqual("asdf", gany.get_text())
         self.assertEqual((0, 3), pos.tuple())

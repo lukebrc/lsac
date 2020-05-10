@@ -5,7 +5,7 @@ class GName(GObject):
     def __init__(self):
         self._name = ''
 
-    def find_end_pos(self, lines, r,c):
+    def find_last_pos(self, lines, r, c):
         self._name = ''
         if r >= len(lines):
             return None
