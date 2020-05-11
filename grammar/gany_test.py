@@ -13,9 +13,7 @@ class GAnyTest(unittest.TestCase):
         text = ""
         text_iterator = TextIterator(text)
         gany = GAny()
-        self.assertTrue(gany.match(text_iterator))
-        pos = gany.get_last_pos()
-        self.assertEqual((0, 0), pos.tuple())
+        self.assertFalse(gany.match(text_iterator))
         self.assertEqual("", gany.get_text())
 
     def test_single_line(self):

@@ -33,7 +33,6 @@ class TextIterator(object):
             self.__next__()
 
     def is_whitespace(self):
-        # if self._lines[]
         char = self._pos.get_char(self._lines)
         return char == ' ' or char == '\t' or char == '\n' or char is None
 

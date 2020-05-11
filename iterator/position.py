@@ -23,7 +23,7 @@ class Position(object):
             raise StopIteration()
         log.debug("Moving next {},{}".format(self.r, self.c))
         self.c += 1
-        while self.r < len(lines) and self.c >= len(lines[self.r]):
+        if self.c >= len(lines[self.r]):
             self.c = 0
             self.r += 1
         return self
