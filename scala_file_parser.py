@@ -64,7 +64,7 @@ class ScalaFileParser(object):
                     self._i += 1
             funId = ScalaFileParser._parseFunDef(line)
             self._objMap.addFunction(self._currentClass, funId)
-        elif ScalaFileParser._isVarDef(line):
+        elif ScalaFileParser._is_var_def(line):
             varName, varType = ScalaFileParser._parseVarDef(line)
             self._objMap.addVar(self._currentClass, varName)
         self._i += 1
@@ -127,7 +127,7 @@ class ScalaFileParser(object):
         return re.match(r"\s*(private|public)?\s*def \w+\s*\(.*\)", line)
 
     @staticmethod
-    def _isVarDef(line):
+    def _is_var_def(line):
         r1 = re.findall(r"\s*va[rl]\s+(\w+)(\s*:\s*\w+)?\s*=(.*)", line)
         return len(r1) > 0
 

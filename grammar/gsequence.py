@@ -1,5 +1,8 @@
 from iterator.text_iterator import TextIterator
 from .gobject import GObject
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class GSequence(GObject):
@@ -7,11 +10,15 @@ class GSequence(GObject):
         self._defList = def_list
 
     def find_last_pos(self, text_iterator: TextIterator):
+        last_pos = None
         for i in range(0, len(self._defList)):
             df = self._defList[i]
             if not df.match(text_iterator):
                 return None
-        return text_iterator.current_pos()
+            last_pos = df.get_last_pos()
+            log.debug("last_pos: {}".format(last_pos))
+
+        return last_pos
 
     def get_definitions(self):
         return self._defList

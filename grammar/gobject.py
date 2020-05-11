@@ -1,5 +1,8 @@
-from abc import ABC, abstractmethod
 from iterator.text_iterator import TextIterator
+from abc import ABC, abstractmethod
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class GObject(ABC):
@@ -9,13 +12,16 @@ class GObject(ABC):
         self._last_pos = None
 
     def match(self, text_iterator: TextIterator):
-        text_iterator.skip_whitespace()
         start_pos = text_iterator.current_pos().copy()
-        last_pos = self.find_last_pos(text_iterator)
-        if last_pos is not None:
-            self._start_pos = start_pos
-            self._last_pos = last_pos
-            return True
+        try:
+            text_iterator.skip_whitespace()
+            last_pos = self.find_last_pos(text_iterator)
+            if last_pos is not None:
+                self._start_pos = start_pos
+                self._last_pos = last_pos
+                return True
+        except StopIteration:
+            log.debug("GObject:match - StopIteration")
         text_iterator.set_current_pos(start_pos)
         return False
 
@@ -40,8 +46,6 @@ class GObject(ABC):
             if definition.match(t):
                 last_pos = definition.get_last_pos()
                 def_list.append(definition)
-                print("matches: pos {}", last_pos)
-                print("parsed definition: {}".format(definition))
                 continue
         if len(def_list) == 0:
             return GAny()
@@ -50,7 +54,7 @@ class GObject(ABC):
         return GSequence(def_list)
 
     def set_next_pos(self, r, c):
-        self._current_pos = (r,c)
+        self._last_pos = (r,c)
 
     def set_recursive_definitions(self, definitions):
         self._definitions = definitions

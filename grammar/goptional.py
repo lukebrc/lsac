@@ -1,20 +1,33 @@
 from grammar.gobject import GObject
 from iterator.text_iterator import TextIterator
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class GOptional(GObject):
     def __init__(self, obj):
         self._object = obj
-        self._foundObj = None
+        self._found_obj = None
+
+    def match(self, text_iterator: TextIterator):
+        try:
+            start_pos = text_iterator.current_pos().copy()
+            if self._object.match(text_iterator):
+                self._found_obj = self._object
+                self._start_pos = self._object.get_start_pos()
+                self._last_pos = self._object.get_last_pos()
+                return True
+        except StopIteration:
+            log.debug("GObject:match - StopIteration")
+        text_iterator.set_current_pos(start_pos)
+        return True
 
     def find_last_pos(self, text_iterator: TextIterator):
-        do_match = self._object.match(text_iterator)
-        if do_match:
-            self._foundObj = self._object
-            self._start_pos = self._foundObj.get_start_pos()
-            self._last_pos = self._foundObj.get_last_pos()
-            return self.get_last_pos()
-        return None
+        raise Exception("NOT IMPLEMENTED")
+
+    def get_found_obj(self):
+        return self._found_obj
 
     def __str__(self):
-        return "GOptional({})".format(self._foundObj or "")
+        return "GOptional({})".format(self._found_obj or "")

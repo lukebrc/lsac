@@ -11,15 +11,21 @@ class GName(GObject):
 
     def find_last_pos(self, text_iterator: TextIterator):
         self._name = ''
+        last_pos = None
         it = iter(text_iterator)
-        while text_iterator.is_valid_pos():
-            last_pos = text_iterator.current_pos().copy()
-            char = next(it)
-            if not GName.is_name_char(char):
-                break
-            self._name += char
+        try:
+            while text_iterator.is_valid_pos():
+                prev_pos = text_iterator.current_pos().copy()
+                char = next(it)
+                if not GName.is_name_char(char):
+                    break
+                last_pos = prev_pos
+                self._name += char
+        except StopIteration:
+            log.debug("GName:StopIteration")
+            return None
         if len(self._name) > 0:
-            log.debug("GName:last_pos {}".format(last_pos))
+            log.debug("GName:last_pos: {}".format(last_pos))
             return last_pos
         return None
 
