@@ -9,7 +9,7 @@ class GAny(GObject):
     def __init__(self, text = None):
         self._text = text
 
-    def find_last_pos(self, lines, r, c):
+    def find_last_pos(self, text_iterator: TextIterator):
         raise NotImplementedError()
 
     def match(self, text_iterator: TextIterator):

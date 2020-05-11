@@ -16,12 +16,13 @@ class GObject(ABC):
             self._start_pos = start_pos
             self._last_pos = last_pos
             return True
+        text_iterator.set_current_pos(start_pos)
         return False
 
-    # sprawdz czy znaleziono ten obiekt w lines poczynajac od pozycji (r,c)
+    # sprawdz czy znaleziono ten obiekt w lines poczynajac od aktualnej pozycji w text_iterator
     # jesli tak, to zwroc koncowa pozycje, w.p.p. None
     @abstractmethod
-    def find_last_pos(self, text_iterator):
+    def find_last_pos(self, text_iterator: TextIterator):
         pass
 
     def get_start_pos(self):

@@ -1,21 +1,25 @@
 from grammar.gobject import GObject
+from iterator.text_iterator import TextIterator
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class GName(GObject):
     def __init__(self):
         self._name = ''
 
-    def find_last_pos(self, lines, r, c):
+    def find_last_pos(self, text_iterator: TextIterator):
         self._name = ''
-        if r >= len(lines):
-            return None
-        while GObject.is_valid_pos(lines, r,c):
-            if not GName.is_name_char(lines[r][c]):
+        it = iter(text_iterator)
+        while text_iterator.is_valid_pos():
+            last_pos = text_iterator.current_pos().copy()
+            char = next(it)
+            if not GName.is_name_char(char):
                 break
-            self._name += lines[r][c]
-            last_pos = (r,c)
-            (r,c) = GObject.get_next_pos(lines, r, c)
+            self._name += char
         if len(self._name) > 0:
+            log.debug("GName:last_pos {}".format(last_pos))
             return last_pos
         return None
 

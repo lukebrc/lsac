@@ -33,8 +33,9 @@ class TextIterator(object):
             self.__next__()
 
     def is_whitespace(self):
-        c = self._pos.get_char(self._lines)
-        return c == ' ' or c == '\t' or c == '\n'
+        # if self._lines[]
+        char = self._pos.get_char(self._lines)
+        return char == ' ' or char == '\t' or char == '\n' or char is None
 
     def is_valid_pos(self):
         return self._pos.is_valid(self._lines)
@@ -43,12 +44,15 @@ class TextIterator(object):
         return self._lines
 
     def current_char(self):
-        if self.is_after_end():
+        if self.is_after_end() or len(self._lines[self._pos.r]) == 0:
             return None
         return self._lines[self._pos.r][self._pos.c]
 
     def current_pos(self):
         return self._pos
+
+    def set_current_pos(self, pos):
+        self._pos = pos
 
     def is_after_end(self):
         return self._pos.is_after_end(self._lines)
