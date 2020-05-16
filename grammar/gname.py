@@ -18,6 +18,7 @@ class GName(GObject):
                 prev_pos = text_iterator.current_pos().copy()
                 char = next(it)
                 if not GName.is_name_char(char):
+                    text_iterator.set_current_pos(prev_pos)
                     break
                 last_pos = prev_pos
                 self._name += char
@@ -25,7 +26,7 @@ class GName(GObject):
             log.debug("GName:StopIteration")
             return None
         if len(self._name) > 0:
-            log.debug("GName:last_pos: {}".format(last_pos))
+            log.debug("Found GName: {} ending at pos {}".format(self._name, last_pos))
             return last_pos
         return None
 

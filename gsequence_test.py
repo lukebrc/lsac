@@ -65,27 +65,57 @@ class GSequenceTest(unittest.TestCase):
         text_iterator = TextIterator(text)
         self.assertFalse( defs.match(text_iterator) )
 
-    def test_bracket_exp1(self):
-        defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")") ] )
-        defs.set_recursive_definitions([defs])
+    def test_bracket_exp_def(self):
+        bracket_exp = BracketExp("(", ")")
+        defs = GSequence([GWord("def"), bracket_exp])
+        # defs.set_recursive_definitions([defs])
+        lines = ["def(a, b, c) "]
+        text = "\n".join(lines)
+        text_iterator = TextIterator(text)
+        self.assertTrue(defs.match(text_iterator))
+        pos = defs.get_last_pos().tuple()
+        self.assertEqual((0, len(lines[0])-2), pos)
+        self.assertEqual("a, b, c", bracket_exp.get_body().get_text())
+
+    def test_bracket_exp_fun(self):
+        bracket_exp = BracketExp("(", ")")
+        gname = GName()
+        defs = GSequence([GWord("def"), gname, bracket_exp])
+        # defs.set_recursive_definitions([defs])
+        lines = ["def TestFun(a, b, c)"]
+        text = "\n".join(lines)
+        text_iterator = TextIterator(text)
+        self.assertTrue(defs.match(text_iterator))
+        pos = defs.get_last_pos().tuple()
+        self.assertEqual((0, len(lines[0])-1), pos)
+        self.assertEqual("a, b, c", bracket_exp.get_body().get_text())
+        self.assertEqual("TestFun", gname.get_name())
+
+    def test_bracket_exp_fun2(self):
+        bracket_exp = BracketExp("(", ")")
+        rdefs = GWord("a, b, c")
+        bracket_exp.set_recursive_definitions([rdefs])
+        defs = GSequence([GWord("def"), GName(), bracket_exp])
+        # defs.set_recursive_definitions([defs])
         lines = ["def TestFun_123(a, b, c) "]
         text = "\n".join(lines)
         text_iterator = TextIterator(text)
-        self.assertTrue( defs.match(text_iterator) )
-        pos = defs.get_last_pos()
-        self.assertEqual((0,len(lines[0]-2)), pos)
+        self.assertTrue(defs.match(text_iterator))
+        pos = defs.get_last_pos().tuple()
+        self.assertEqual((0, len(lines[0])-2), pos)
+        self.assertNotEqual(None, bracket_exp.get_body())
 
     def test_bracket_exp2(self):
         defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")"), BracketExp("{", "}") ] )
         defs.set_recursive_definitions([defs])
-        lines = ["def TestFun_123(a, b, c) {", " print(123) ", "print(456)", "}" ]
+        lines = ["def TestFun_123(a, b, c) {", " print(123) ", "print(456)", "}"]
         text = "\n".join(lines)
         text_iterator = TextIterator(text)
-        self.assertTrue(text_iterator)
+        self.assertTrue(defs.match(text_iterator))
         pos = defs.get_last_pos()
         self.assertEqual(len(lines), pos[0])
 
-    def test_bracket_exp2(self):
+    def test_bracket_exp3(self):
         defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")"), GType() ] )
         lines = ["def TestFun_123(a, b, c) :Unit"]
         text = "\n".join(lines)
@@ -94,7 +124,7 @@ class GSequenceTest(unittest.TestCase):
         pos = defs.get_last_pos()
         self.assertEqual(len(lines), pos[0])
 
-    def test_bracket_exp3(self):
+    def test_bracket_exp4(self):
         defs = GSequence( [GWord("def"), GName(), BracketExp("(", ")"), GType(), GWord("="), BracketExp("{", "}") ] )
         lines = ["def TestFun_123(a, b, c) :Unit = {", " print(123) ", "print(456)", "}" ]
         text = "\n".join(lines)

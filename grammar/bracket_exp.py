@@ -18,17 +18,20 @@ class BracketExp(GObject):
 
     def match(self, text_iterator: TextIterator):
         log.debug("match start")
+        start_pos = text_iterator.current_pos().copy()
         if self._find_matching_braces(text_iterator):
-            content_start = self._start_pos.move(1, text_iterator.get_lines())
-            content_end = self._last_pos.move(-1, text_iterator.get_lines())
+            content_start = self._start_pos.copy().move(1, text_iterator.get_lines())
+            content_end = self._last_pos.copy().move(-1, text_iterator.get_lines())
             inside_text = text_iterator.get_substr(content_start, content_end)
-            log.debug("Parsing inside definition {}\n".format(inside_text))
+            log.debug("Parsing inside definition: {}\n".format(inside_text))
             if self._definitions is not None:
                 self._body = GObject.parse_definitions(inside_text, self._definitions)
                 self._body.set_recursive_definitions(self._definitions)
             else:
                 self._body = GWord(inside_text)
             return True
+
+        text_iterator.set_current_pos(start_pos)
         return False
 
     def find_last_pos(self, text_iterator: TextIterator):
@@ -52,14 +55,16 @@ class BracketExp(GObject):
         next(it)
         self._lbrace_count = 1
         while not text_iterator.is_after_end():
-            log.debug("pos: {}\n".format(text_iterator.current_pos))
+            pos = text_iterator.current_pos().copy()
+            log.debug("pos: {}\n".format(pos))
             char = next(it)
             if char == self._lbrace:
                 self._lbrace_count += 1
             elif char == self._rbrace:
                 self._rbrace_count += 1
             if self._lbrace_count == self._rbrace_count:
-                self._last_pos = text_iterator.current_pos()
+                self._last_pos = pos
+                log.debug("_find_matching_braces - setting last_pos: {}".format(self._last_pos))
                 return True
         log.debug("end reached: {}\n".format(text_iterator.current_pos))
         return False

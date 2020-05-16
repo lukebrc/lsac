@@ -10,6 +10,7 @@ class GObject(ABC):
         self._start_pos = None
         # pozycja ostatniego znaku gobject
         self._last_pos = None
+        self._definitions = None
 
     def match(self, text_iterator: TextIterator):
         start_pos = text_iterator.current_pos().copy()

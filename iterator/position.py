@@ -38,8 +38,8 @@ class Position(object):
 
     def get_char(self, lines):
         log.debug("get_char: {},{}".format(self.r, self.c))
-        log.debug(lines)
         if len(lines[self.r]) > 0:
+            log.debug("char: {}".format(lines[self.r][self.c]))
             return lines[self.r][self.c]
         return None
 

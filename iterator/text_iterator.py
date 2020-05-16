@@ -59,10 +59,11 @@ class TextIterator(object):
     def eol_reached(self):
         return self._pos.eol_reached(self._lines)
 
-    def get_substr(self, start, end):
-        pos = start
+    def get_substr(self, pos_start, pos_last):
+        pos = pos_start
         text = ''
-        while pos != end:
+        while pos != pos_last:
             text += pos.get_char(self._lines)
             pos.move_next(self._lines)
+        text += pos.get_char(self._lines)
         return text
