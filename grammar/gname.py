@@ -24,7 +24,6 @@ class GName(GObject):
                 self._name += char
         except StopIteration:
             log.debug("GName:StopIteration")
-            return None
         if len(self._name) > 0:
             log.debug("Found GName: {} ending at pos {}".format(self._name, last_pos))
             return last_pos

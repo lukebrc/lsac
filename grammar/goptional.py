@@ -15,8 +15,8 @@ class GOptional(GObject):
             start_pos = text_iterator.current_pos().copy()
             if self._object.match(text_iterator):
                 self._found_obj = self._object
-                self._start_pos = self._object.get_start_pos()
-                self._last_pos = self._object.get_last_pos()
+                self._start_pos = self._object.get_start_pos().copy()
+                self._last_pos = self._object.get_last_pos().copy()
                 return True
         except StopIteration:
             log.debug("GObject:match - StopIteration")

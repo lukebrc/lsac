@@ -12,7 +12,7 @@ class GWord(GObject):
     def find_last_pos(self, text_iterator: TextIterator):
         pos = None
         for i in range(0, len(self._word)):
-            pos = text_iterator.current_pos()
+            pos = text_iterator.current_pos().copy()
             v = next(text_iterator)
             if v != self._word[i]:
                 log.debug("Word: {} mismatch at pos {}".format(self._word, pos))

@@ -17,7 +17,6 @@ class GSequence(GObject):
                 return None
             last_pos = df.get_last_pos()
             log.debug("last_pos: {}".format(last_pos))
-
         return last_pos
 
     def get_definitions(self):

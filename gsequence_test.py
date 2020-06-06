@@ -55,8 +55,8 @@ class GSequenceTest(unittest.TestCase):
         text = "\n".join(lines)
         text_iterator = TextIterator(text)
         self.assertTrue(defs.match(text_iterator))
-        pos = defs.get_last_pos()
-        self.assertEqual((0, 19), pos)
+        pos = defs.get_last_pos().tuple()
+        self.assertEqual((0, 20), pos)
 
     def test_optional_invalid(self):
         defs = GSequence( [GWord("def"), GName(), GOptional(GWord(":")), GName(), GWord("{")] )
