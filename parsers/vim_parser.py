@@ -1,7 +1,7 @@
 import vim
 import sys
 import os
-import parser
+from parsers import parser
 
 pluginPath = vim.eval('s:pyPluginPath')
 pluginPath = os.path.realpath(pluginPath)

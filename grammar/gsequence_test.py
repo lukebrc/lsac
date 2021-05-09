@@ -5,6 +5,7 @@ from grammar.gname import GName
 from grammar.goptional import GOptional
 from grammar.bracket_exp import BracketExp
 from iterator.text_iterator import TextIterator
+
 import unittest
 import logging
 

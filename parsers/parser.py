@@ -1,7 +1,4 @@
-import sys
-import os
-
-import scalaparser
+from parsers import scalaparser
 import luaparser
 
 

@@ -27,6 +27,23 @@ class GSequence(GObject):
         for df in self._defList:
             df.set_recursive_definitions(definitions)
 
+    def to_dict(self):
+        return {
+            "defList": [elem.to_dict() for elem in self._defList]
+        }
+
+    def load_dict_int(self, dict):
+        self._defList = []
+        for e in dict['defList']:
+            class_name = e['class_name']
+            elem = GObject.create_instance(class_name)
+            elem.load_dict(e)
+
+    def accept(self, visitor):
+        visitor.visit(self)
+        for d in self._defList:
+            d.accept(visitor)
+
     def __str__(self):
         list_str = map(str, self._defList)
         return "GSequence({})".format(",".join(list_str))

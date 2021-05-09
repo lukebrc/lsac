@@ -1,4 +1,5 @@
 from iterator.text_iterator import TextIterator
+from iterator.position import Position
 from abc import ABC, abstractmethod
 import logging
 
@@ -13,6 +14,8 @@ class GObject(ABC):
         self._definitions = None
 
     def match(self, text_iterator: TextIterator):
+        if text_iterator.is_after_end():
+            return False
         start_pos = text_iterator.current_pos().copy()
         try:
             text_iterator.skip_whitespace()
@@ -29,13 +32,29 @@ class GObject(ABC):
     # sprawdz czy znaleziono ten obiekt w lines poczynajac od aktualnej pozycji w text_iterator
     # jesli tak, to zwroc koncowa pozycje, w.p.p. None
     @abstractmethod
-    def find_last_pos(self, text_iterator: TextIterator):
+    def find_last_pos(self, text_iterator: TextIterator) -> Position:
         pass
 
-    def get_start_pos(self):
+    @abstractmethod
+    def to_dict(self) -> dict:
+        pass
+
+    def load_dict(self, dict):
+        self._start_pos = dict['start_pos']
+        self._last_pos = dict['last_pos']
+        self.load_dict_int(dict)
+
+    @abstractmethod
+    def load_dict_int(self, dict):
+        pass
+
+    def get_class_name(self):
+        return self.__class__.__name__
+
+    def get_start_pos(self) -> Position:
         return self._start_pos
 
-    def get_last_pos(self):
+    def get_last_pos(self) -> Position:
         return self._last_pos
 
     @staticmethod
@@ -60,3 +79,5 @@ class GObject(ABC):
     def set_recursive_definitions(self, definitions):
         self._definitions = definitions
 
+    def accept(self, visitor):
+        visitor.visit(self)

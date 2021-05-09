@@ -17,7 +17,7 @@ class GAny(GObject):
             text_iterator.skip_whitespace()
             self._start_pos = text_iterator.current_pos().copy()
             self._text = ''
-            while True:
+            while not text_iterator.is_after_end():
                 if text_iterator.is_valid_pos():
                     self._text += next(text_iterator)
                 if text_iterator.current_pos().r > self._start_pos.r:

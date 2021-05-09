@@ -1,4 +1,4 @@
-import scalaparser
+from parsers import scalaparser
 import unittest
 
 parser = scalaparser.ScalaParser()

@@ -1,5 +1,6 @@
 from grammar.gobject import GObject
 from iterator.text_iterator import TextIterator
+from iterator.position import Position
 import logging
 
 log = logging.getLogger(__name__)
@@ -9,7 +10,7 @@ class GName(GObject):
     def __init__(self):
         self._name = ''
 
-    def find_last_pos(self, text_iterator: TextIterator):
+    def find_last_pos(self, text_iterator: TextIterator) -> Position:
         self._name = ''
         last_pos = None
         it = iter(text_iterator)

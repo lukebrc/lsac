@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import os
-import parser
+from parsers import parser
 import argparse
 
 plugin_path = '/home/lukasz/prog/lsac'
@@ -29,8 +29,8 @@ def main(argv):
 
     if parsed_args.operation == 'parse':
         parser.parseFile(parsed_args.file,
-            parsed_args.type,
-            current_pos)
+                         parsed_args.type,
+                         current_pos)
     else:
         raise RuntimeError("Unknown operation: {}".format(parsed_args.operation))
 
